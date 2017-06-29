@@ -1,4 +1,5 @@
 ﻿using Zhoubin.Infrastructure.Common.Extent;
+using Zhoubin.Infrastructure.MessageQueue.Config;
 
 namespace Zhoubin.Infrastructure.MessageQueue
 {

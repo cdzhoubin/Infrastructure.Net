@@ -97,6 +97,18 @@
     <Compile Include="InfrastructureException.cs" />
     <Compile Include="Ioc\NamespaceDoc.cs" />
     <Compile Include="Ioc\ResolverBase.cs" />
+    <Compile Include="Log\Config\LogConfigEntity.cs" />
+    <Compile Include="Log\Config\LogConfigHelper.cs" />
+    <Compile Include="Log\Config\LogService.cs" />
+    <Compile Include="Log\ILogEntity.cs" />
+    <Compile Include="Log\ILogger.cs" />
+    <Compile Include="Log\LogEntity.cs" />
+    <Compile Include="Log\LogEntityBase.cs" />
+    <Compile Include="Log\LogExceptionEntity.cs" />
+    <Compile Include="Log\LogFactory.cs" />
+    <Compile Include="Log\LoggerBase.cs" />
+    <Compile Include="Log\NamespaceDoc.cs" />
+    <Compile Include="Log\Sevenrity.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Repositories\AccessException.cs" />
     <Compile Include="Repositories\EventArgs\AccessEventArgs.cs" />
@@ -146,9 +158,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="WinForm\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

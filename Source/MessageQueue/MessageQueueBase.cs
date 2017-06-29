@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Zhoubin.Infrastructure.Log;
+using Zhoubin.Infrastructure.MessageQueue.Config;
 
 namespace Zhoubin.Infrastructure.MessageQueue
 {

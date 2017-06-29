@@ -1,43 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Zhoubin.Infrastructure.Common.Config;
 
-namespace Zhoubin.Infrastructure.MessageQueue
+namespace Zhoubin.Infrastructure.MessageQueue.Config
 {
-    /// <summary>
-    /// 日志配置帮助类
-    /// </summary>
-    public sealed class MessageQueueConfigHelper : ConfigHelper<MessageQueueEntity>
-    {
-        /// <summary>
-        /// 日志配置帮助类
-        /// </summary>
-        /// <param name="configFile">配置文件</param>
-        public MessageQueueConfigHelper(string configFile)
-            : base("MessageQueue", configFile)
-        {
-        }
-
-        /// <summary>
-        /// 默认日志处理器
-        /// </summary>
-        public MessageQueueEntity Default
-        {
-            get
-            {
-                return Section.First(p => p.Default);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 消息队列配置区
-    /// </summary>
-    public class MessageQueueSection : ConfigurationSectionHandlerHelper<MessageQueueEntity>
-    {
-    }
-
     /// <summary>
     /// 消息队列，配置说明
     /// </summary>

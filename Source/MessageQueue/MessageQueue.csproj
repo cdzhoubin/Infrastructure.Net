@@ -47,6 +47,8 @@
     <Compile Include="..\Common\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Config\MessageQueueConfigHelper.cs" />
+    <Compile Include="Config\MessageQueueEntity.cs" />
     <Compile Include="IAutoReveiveMessage.cs" />
     <Compile Include="IMessageQueue.cs" />
     <Compile Include="JsonFormater.cs" />
@@ -59,16 +61,12 @@
     <Compile Include="MSMQ.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Section.cs" />
+    <Compile Include="Config\MessageQueueSection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{bd659d1b-d047-4050-afdb-e024099b1003}</Project>
       <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Log\Log.csproj">
-      <Project>{2f55a225-e498-484d-b2f7-f9ba282edf9c}</Project>
-      <Name>Log</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
