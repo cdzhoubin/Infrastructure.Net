@@ -90,9 +90,8 @@ namespace Zhoubin.Infrastructure.Common.Tools
             }
             catch (Exception exception)//解析出错暂时不作记录，直接使用空值
             {
-                //Log.LogFactory.GetDefaultLogger().Write(string.Format("待解析地区信息：{0}", country));
-                //Log.LogFactory.GetDefaultLogger().Write(exception);
-                throw;
+                Log.LogFactory.GetDefaultLogger().Write(string.Format("待解析地区信息：{0}", country));
+                Log.LogFactory.GetDefaultLogger().Write(exception);
             }
 
             return new[] { province, city };
@@ -151,6 +150,10 @@ namespace Zhoubin.Infrastructure.Common.Tools
     /// </summary>
    public  class QQWryLocator : IReadIP
     {
+        static QQWryLocator()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        }
         private byte[] data;
         readonly Regex _regex = new Regex(@"(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))");
         long _firstStartIpOffset;

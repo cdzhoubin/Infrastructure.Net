@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Management.Instrumentation;
 
 namespace Zhoubin.Infrastructure.Common.Tools
 {
@@ -69,7 +68,7 @@ namespace Zhoubin.Infrastructure.Common.Tools
             Type enumType = typeof (T);
             if (enumType.IsEnum)
             {
-                throw new InstrumentationException("类型T，只支持Enum。");
+                throw new InfrastructureException("类型T，只支持Enum。");
             }
 
             return GetEnumDictionary(enumType,defaultValue);

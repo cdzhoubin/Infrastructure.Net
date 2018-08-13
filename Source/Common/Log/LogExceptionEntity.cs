@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Zhoubin.Infrastructure.Log
+namespace Zhoubin.Infrastructure.Common.Log
 {
     /// <summary>
     /// 异常日志实体

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Zhoubin.Infrastructure.Common.Config;
 using Zhoubin.Infrastructure.Common.Extent;
-using Zhoubin.Infrastructure.Log.Config;
 
-namespace Zhoubin.Infrastructure.Log
+namespace Zhoubin.Infrastructure.Common.Log
 {
     /// <summary>
     /// 日志工厂类
@@ -19,9 +18,9 @@ namespace Zhoubin.Infrastructure.Log
         /// </summary>
         /// <param name="configName">配置文件路径，全路径</param>
         /// <returns>返回日志处理器</returns>
-        public static ILogger GetDefaultLogger(string configName = null)
+        public static ILogger GetDefaultLogger()
         {
-            return CreateLogger(new LogConfigHelper(configName).Default);
+            return CreateLogger(new LogConfigHelper().Default);
         }
 
         /// <summary>
@@ -30,9 +29,9 @@ namespace Zhoubin.Infrastructure.Log
         /// <param name="loggerName">处理器名称</param>
         /// <param name="configName">配置文件路径，全路径</param>
         /// <returns>返回日志处理器</returns>
-        public static ILogger GetLogger(string loggerName, string configName = null)
+        public static ILogger GetLogger(string loggerName)
         {
-            var heper = new LogConfigHelper(configName);
+            var heper = new LogConfigHelper();
             return CreateLogger(heper[loggerName]);
         }
 

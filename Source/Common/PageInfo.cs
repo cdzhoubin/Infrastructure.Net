@@ -98,7 +98,7 @@ namespace Zhoubin.Infrastructure.Common
         /// <summary>
         /// 空
         /// </summary>
-        public PageInfo<T> Empty
+        public static PageInfo<T> Empty
         {
             get { return new PageInfo<T>(); }
         }

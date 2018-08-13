@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Configuration;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,17 +7,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
-using Zhoubin.Infrastructure.Common.Gif;
-using Zhoubin.Infrastructure.Common.Properties;
-using Zhoubin.Infrastructure.Common.Tools;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using System.Diagnostics.Contracts;
 using System.IO.Compression;
 using System.Security;
-using com.google.zxing;
-using com.google.zxing.qrcode.decoder;
-using System.Globalization;
+using Zhoubin.Infrastructure.Common.Tools;
+using Zhoubin.Infrastructure.Common.Config;
 
 namespace Zhoubin.Infrastructure.Common.Extent
 {
@@ -503,116 +497,7 @@ namespace Zhoubin.Infrastructure.Common.Extent
 
             return data.Country;
         }
-
-        /// <summary>
-        /// 创建条形码
-        /// </summary>
-        /// <param name="str">字符串</param>
-        /// <param name="barcodeFormat">编码格式</param>
-        /// <param name="width">宽度</param>
-        /// <param name="height">高度</param>
-        /// <returns>如果输入字符串为空或null,返回null</returns>
-        public static Bitmap CreateBarcode(this string str, int width, int height, BarcodeFormat barcodeFormat)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return null;
-            }
-
-            if (width <= 0 || height <= 0)
-            {
-                throw new ArgumentException(Resources.WidthMustGTZero, "width");
-            }
-
-            if (height <= 0)
-            {
-                throw new ArgumentException(Resources.HeightMustGTZero, "height");
-            }
-
-            if (barcodeFormat.Name == BarcodeFormat.EAN_13.Name && str.Length < 13)
-            {
-                throw new ArgumentException(Resources.EAN13LengthMust13Bit, "barcodeFormat");
-            }
-
-            if (barcodeFormat.Name == BarcodeFormat.EAN_8.Name && str.Length < 8)
-            {
-                throw new ArgumentException(Resources.EAN8LengthMust8bit, "barcodeFormat");
-            }
-
-            var multiFormatWriter = new MultiFormatWriter();
-            var hint = new Hashtable
-            {
-                {EncodeHintType.CHARACTER_SET, "UTF-8"},
-                {EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H}
-            };
-            var byteMatrix = multiFormatWriter.encode(str, barcodeFormat, width, height, hint);
-            return byteMatrix.ToBitmap();
-        }
-
-        /// <summary>
-        /// 创建条形码,默认使用BarcodeFormat.EAN_13
-        /// </summary>
-        /// <param name="str">字符串</param>
-        /// <param name="width">宽度</param>
-        /// <param name="height">高度</param>
-        /// <returns>如果输入字符串为空或null,返回null</returns>
-        public static Bitmap CreateBarcode(this string str, int width, int height)
-        {
-            return CreateBarcode(str, width, height, BarcodeFormat.EAN_13);
-        }
-
-        /// <summary>
-        /// 从文件解析二位码
-        /// </summary>
-        /// <param name="str">文件路径</param>
-        /// <returns>返回解析后的二位码</returns>
-        public static string DecodeBarcode(this string str)
-        {
-            return Image.FromFile(str).DecodeBarcode();
-        }
-
-        /// <summary>
-        /// 创建带中心图片的二位码
-        /// </summary>
-        /// <param name="str">二位码内容</param>
-        /// <param name="width">长度</param>
-        /// <param name="centerImage">中心图片</param>
-        /// <returns>创建好的图片</returns>
-        public static Bitmap CreateBarcode(this string str, int width, Bitmap centerImage)
-        {
-            return CreateBarcode(str, width, centerImage, 0.3f);
-        }
-
-        /// <summary>
-        /// 创建带中心图片的二位码
-        /// </summary>
-        /// <param name="str">二位码内容</param>
-        /// <param name="width">长度</param>
-        /// <param name="centerImage">中心图片</param>
-        /// <param name="zoom">中心图片的缩放比例</param>
-        /// <returns>创建好的图片</returns>
-        public static Bitmap CreateBarcode(this string str, int width, Bitmap centerImage, float zoom)
-        {
-            if (zoom < 0 && zoom > 1)
-            {
-                throw new ArgumentException(Resources.ImageZoom, "zoom");
-            }
-            var img = CreateBarcode(str, width, width, BarcodeFormat.QR_CODE);
-            if (img == null)
-            {
-                return null;
-            }
-
-            var centerImageWidth = (int)(width * zoom);
-            var zoomImage = Thumbnail.CreateThumbnail(centerImage, centerImageWidth, true);
-            var bmp = new Bitmap(width, width);
-            using (var g = Graphics.FromImage(bmp))
-            {
-                g.DrawImage(img, new Point { X = 0, Y = 0 });
-                g.DrawImage(zoomImage, new Point { X = width / 2 - centerImageWidth / 2, Y = width / 2 - centerImageWidth / 2 });
-            }
-            return bmp;
-        }
+        
 
         /// <summary>
         ///  转半角的函数(SBC case)
@@ -636,145 +521,6 @@ namespace Zhoubin.Infrastructure.Common.Extent
             return new string(c);
         }
 
-        /// <summary>
-        /// 创建图片
-        /// </summary>
-        /// <param name="str">待创建字符串</param>
-        /// <returns>返回生成的验证码图像流</returns>
-        public static Stream CreateVerificationCode(this string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return null;
-            }
-            int iwidth = str.Length * 11;
-            Bitmap image = new Bitmap(iwidth, 19);
-            Graphics g = Graphics.FromImage(image);
-            g.Clear(Color.White);
-            //定义颜色
-            Color[] c = { Color.Black, Color.Red, Color.DarkBlue, Color.Green, Color.Chocolate, Color.Brown, Color.DarkCyan, Color.Purple };
-
-            //输出不同字体和颜色的验证码字符
-            for (int i = 0; i < str.Length; i++)
-            {
-                int cindex = RandomStringExtent.Next(7);
-                Font f = new Font("Microsoft Sans Serif", 11);
-                Brush b = new SolidBrush(c[cindex]);
-                g.DrawString(str.Substring(i, 1), f, b, (i * 10) + 1, 0, StringFormat.GenericDefault);
-            }
-            //画一个边框
-            g.DrawRectangle(new Pen(Color.Black, 0), 0, 0, image.Width - 1, image.Height - 1);
-
-
-            //输出到浏览器
-            MemoryStream ms = new MemoryStream();
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
-            g.Dispose();
-            image.Dispose();
-            ms.Position = 0;
-            return ms;
-        }
-        /// <summary>
-        /// 创建校验码
-        /// 如果字符串为空，返回null
-        /// </summary>
-        /// <param name="str">待创建字符串</param>
-        /// <param name="width">图像宽度</param>
-        /// <param name="height">图像高度</param>
-        /// <param name="delay">动画延时</param>
-        /// <exception cref="ArgumentException">当宽或高小于0时，抛出此异常</exception>
-        /// <returns>返回图片对象，当字符串为空或null时返回null</returns>
-        public static Stream CreateGifVerificationCode(this string str, int width, int height, int delay)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return null;
-            }
-
-            if (width <= 0 || height <= 0)
-            {
-                throw new ArgumentException(Resources.WidthMustGTZero, "width");
-            }
-            var coder = new AnimatedGifEncoder();
-            coder.SetSize(width, height);
-            coder.SetRepeat(0);
-
-            var stream = new MemoryStream();
-            coder.Start(stream);
-            Process(coder, str, width, height, delay);
-            stream.Position = 0;
-            return stream;
-        }
-
-        private static void Process(AnimatedGifEncoder coder, string code, int width, int height, int delay)
-        {
-            // GenerateIdentifyingCode(_defaultIdentifyingCodeLen);
-            var br = Brushes.White;
-
-            var rect = new Rectangle(0, 0, width, height);
-
-            var f = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
-            var f1 = new Font(FontFamily.GenericMonospace, 14, FontStyle.Italic);
-
-            var frameCount = RandomStringExtent.Next(3, 4);
-            var codeFrameIndex = RandomStringExtent.Next(1, frameCount);
-
-            for (var i = 0; i < frameCount; i++)
-            {
-                Image im = new Bitmap(width, height);
-                var ga = Graphics.FromImage(im);
-                ga.FillRectangle(br, rect);
-                var fH = height - 1 - (int)f.GetHeight();
-                var fW = width - 1 - (int)ga.MeasureString(code, (i == codeFrameIndex - 1 ? f : f1)).Width;
-                if (fH < 1)
-                {
-                    fH = 2;
-                }
-
-                if (fW < 1)
-                {
-                    fW = 3;
-                }
-                AddNoise(ga, width, height, RandomStringExtent);
-                if (i == codeFrameIndex - 1)
-                {
-
-                    Brush b = new SolidBrush(Color.Black);
-                    ga.DrawString(code, f, b
-                        , new PointF(RandomStringExtent.Next(1, fW)
-                            , RandomStringExtent.Next(1, fH)
-                            )
-                        );
-                }
-                else
-                {
-                    Brush b = new SolidBrush(Color.Aquamarine);
-                    ga.DrawString(code.RandomString(code.Length), f1, b
-                        , new PointF(RandomStringExtent.Next(1, fW)
-                            , RandomStringExtent.Next(1, fH)
-                            )
-                        );
-                }
-                ga.Flush();
-                coder.SetDelay(delay);
-                coder.AddFrame(im);
-                im.Dispose();
-            }
-            coder.Finish();
-        }
-        private static void AddNoise(Graphics ga, int width, int height, Random random)
-        {
-            var pen = new Pen(SystemColors.GrayText);
-            var noiseCount = random.Next(8, 15);
-            var ps = new Point[noiseCount];
-            for (var i = 0; i < noiseCount; i++)
-            {
-                ps[i] = new Point(random.Next(1, width - 1), random.Next(1, height - 1));
-            }
-
-            ga.DrawLines(pen, ps);
-
-        }
 
         /// <summary>
         /// 生成随机字符串
@@ -904,52 +650,12 @@ namespace Zhoubin.Infrastructure.Common.Extent
         /// <summary>
         /// 检验是否是有效组织机构代码
         /// </summary>
-        /// <param name="code">待校验值</param>
+        /// <param name="idCard">待校验值</param>
         /// <param name="msg">校验错误信息,正确返回空</param>
         /// <returns>有效组织机构代码返回：true,其它:false</returns>
-        public static bool IsOrganizationCode(this string code, out string msg)
+        public static bool IsOrganizationCode(this string idCard, out string msg)
         {
-            return IsValidEntpCode(code, out msg);
-        }
-        static readonly Regex RegCode = new Regex("^([0-9A-Z]){8}-[0-9|X]$");
-        private const String BaseCode = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        internal static bool IsValidEntpCode(String code, out string msg)
-        {
-            msg = "";
-            code = code.ToUpper();
-            int[] ws = { 3, 7, 9, 10, 5, 8, 4, 2 };
-
-
-            if (!RegCode.IsMatch(code))
-            {
-                msg = "组织机构代码格式不正确，正确格式示例：E0000000-X";
-                return false;
-            }
-            int sum = 0;
-            for (var i = 0; i < 8; i++)
-            {
-                sum += BaseCode.IndexOf(code[i]) * ws[i];
-            }
-
-            int c9 = 11 - (sum % 11);
-
-            String sc9 = c9.ToString(CultureInfo.InvariantCulture);
-            if (11 == c9)
-            {
-                sc9 = "0";
-            }
-            else if (10 == c9)
-            {
-                sc9 = "X";
-            }
-
-            if (sc9[0] != code[9])
-            {
-                msg = "校验位不正确，请检查。";
-                return false;
-            }
-
-            return true;
+            return OrganizationCodeValidator.IsValidEntpCode(idCard, out msg);
         }
        
         #region AppSetting配置读取扩展
@@ -967,7 +673,7 @@ namespace Zhoubin.Infrastructure.Common.Extent
             int value = defaultValue;
             if (!string.IsNullOrEmpty(name))
             {
-                string value1 = ConfigurationManager.AppSettings[name];
+                string value1 = ConfigHelper.GetAppSettings(name);
                 if (!string.IsNullOrEmpty(value1))
                 {
                     if (!int.TryParse(value1, out value))
@@ -1002,7 +708,7 @@ namespace Zhoubin.Infrastructure.Common.Extent
             Decimal value = defaultValue;
             if (!string.IsNullOrEmpty(name))
             {
-                string value1 = ConfigurationManager.AppSettings[name];
+                string value1 = ConfigHelper.GetAppSettings(name);
                 if (!string.IsNullOrEmpty(value1))
                 {
                     if (!Decimal.TryParse(value1, out value))
@@ -1034,7 +740,7 @@ namespace Zhoubin.Infrastructure.Common.Extent
         {
             if (!string.IsNullOrEmpty(name))
             {
-                string value1 = ConfigurationManager.AppSettings[name];
+                string value1 = ConfigHelper.GetAppSettings(name);
                 if (!string.IsNullOrEmpty(value1))
                 {
                     return value1;
@@ -1236,6 +942,7 @@ namespace Zhoubin.Infrastructure.Common.Extent
         /// 读取环境变更
         /// </summary>
         /// <param name="name">变量名称</param>
+        /// <param name="scope">环境变量范围</param>
         /// <returns>返回读取到的环境变更，如果读取为空，表示变量不存在</returns>
         public static string EnvironmentGet(this string name, EnvironmentVariableTarget scope = EnvironmentVariableTarget.Machine)
         {
@@ -1245,6 +952,7 @@ namespace Zhoubin.Infrastructure.Common.Extent
         /// 检查环境变量
         /// </summary>
         /// <param name="name">变量名称</param>
+        /// <param name="scope">环境变更查询范围</param>
         /// <returns>返回读取到的环境变更，如果读取为空，表示变量不存在</returns>
         public static bool EnvironmentExist(this string name, EnvironmentVariableTarget scope = EnvironmentVariableTarget.Machine)
         {
@@ -1350,6 +1058,184 @@ namespace Zhoubin.Infrastructure.Common.Extent
                 Environment.SetEnvironmentVariable(PathName, sb.ToString(), EnvironmentVariableTarget.Machine);
             }
             return true;
+        }
+        /// <summary>
+        /// 转换CSV文件为DataTable
+        /// 使用utf-8解码文件
+        /// </summary>
+        /// <param name="file">文件路径</param>
+        /// <param name="firstRowForTitle">第一列为列名，true表示第一行为列名，false表示第一行非列表</param>
+        /// <param name="lineAction">行处理器</param>
+        /// <returns>参数file为空或文件不存在返回null,其它返回解析结果</returns>
+        public static DataTable CsvToDataTable(this string file, bool firstRowForTitle = true, Action<string> lineAction = null)
+        {
+            return CsvToDataTable(file, Encoding.UTF8, firstRowForTitle, lineAction);
+        }
+        /// <summary>
+        /// 转换CSV文件为DataTable
+        /// </summary>
+        /// <param name="file">文件路径</param>
+        /// <param name="encoding">文件编码</param>
+        /// <param name="firstRowForTitle">第一列为列名，true表示第一行为列名，false表示第一行非列表</param>
+        /// <param name="lineAction">行处理器</param>
+        /// <returns>参数file为空或文件不存在返回null,其它返回解析结果</returns>
+        public static DataTable CsvToDataTable(this string file, Encoding encoding,bool firstRowForTitle = true,Action<string> lineAction = null)
+        {
+            if (string.IsNullOrEmpty(file))
+            {
+                return null;
+            }
+            if (!File.Exists(file))
+            {
+                return null;
+            }
+
+            
+            using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
+            {
+                return CreateDataTable(encoding, firstRowForTitle, lineAction, fs);
+            }
+        }
+
+        /// <summary>
+        /// 转换CSV内容为DataTable
+        /// </summary>
+        /// <param name="content">文件路径</param>
+        /// <param name="firstRowForTitle">第一列为列名，true表示第一行为列名，false表示第一行非列表</param>
+        /// <param name="lineAction">行处理器</param>
+        /// <returns>参数file为空或文件不存在返回null,其它返回解析结果</returns>
+        public static DataTable CsvContentToDataTable(this string content, bool firstRowForTitle = true, Action<string> lineAction = null)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                return null;
+            }
+            using (MemoryStream fs = new MemoryStream(Encoding.UTF8.GetBytes(content)))
+            {
+                return CreateDataTable(Encoding.UTF8, firstRowForTitle, lineAction, fs);
+            }
+        }
+
+        private static DataTable CreateDataTable(Encoding encoding, bool firstRowForTitle, Action<string> lineAction, Stream fs)
+        {
+            DataTable dt = new DataTable();
+            using (var reader = new StreamReader(fs, encoding))
+            {
+                string strLine;
+                //记录每行记录中的各字段内容
+                //标示列数
+                int columnCount = 0;
+                //标示是否是读取的第一行
+                bool isFirst = true;
+                //逐行读取CSV中的数据
+                while ((strLine = reader.ReadLine()) != null)
+                {
+                    if (lineAction != null)
+                    {
+                        lineAction(strLine);
+                    }
+                    if (strLine.StartsWith("#")) //跳过注释解析
+                    {
+                        continue;
+                    }
+                    if (string.IsNullOrEmpty(strLine))
+                    {
+                        continue;
+                    }
+                    var aryLine = ParseLine(strLine);
+                    if (isFirst == true)
+                    {
+                        isFirst = false;
+                        columnCount = aryLine.Count;
+                        //创建列
+                        for (int i = 0; i < columnCount; i++)
+                        {
+                            DataColumn dc = new DataColumn(firstRowForTitle ? aryLine[i] : i.ToString());
+                            dc.Caption = dc.ColumnName;
+                            dc.DataType = typeof(string);
+                            dt.Columns.Add(dc);
+                        }
+                    }
+                    else
+                    {
+                        DataRow dr = dt.NewRow();
+                        for (int j = 0; j < columnCount; j++)
+                        {
+                            dr[j] = aryLine[j];
+                        }
+                        dt.Rows.Add(dr);
+                    }
+                }
+            }
+            return dt;
+        }
+
+        /// <summary>
+        /// Reads a row of data from a CSV file
+        /// </summary>
+        /// <param name="lineText"></param>
+        /// <returns></returns>
+        static List<string> ParseLine(string lineText)
+        {
+            List<string> lines = new List<string>();
+            if (String.IsNullOrEmpty(lineText))
+                return lines;
+
+            int pos = 0;
+
+            while (pos < lineText.Length)
+            {
+                string value;
+
+                // Special handling for quoted field
+                if (lineText[pos] == '"')
+                {
+                    // Skip initial quote
+                    pos++;
+
+                    // Parse quoted value
+                    int start = pos;
+                    while (pos < lineText.Length)
+                    {
+                        // Test for quote character
+                        if (lineText[pos] == '"')
+                        {
+                            // Found one
+                            pos++;
+
+                            // If two quotes together, keep one
+                            // Otherwise, indicates end of value
+                            if (pos >= lineText.Length || lineText[pos] != '"')
+                            {
+                                pos--;
+                                break;
+                            }
+                        }
+                        pos++;
+                    }
+                    value = lineText.Substring(start, pos - start);
+                    value = value.Replace("\"\"", "\"");
+                }
+                else
+                {
+                    // Parse unquoted value
+                    int start = pos;
+                    while (pos < lineText.Length && lineText[pos] != ',')
+                        pos++;
+                    value = lineText.Substring(start, pos - start);
+                }
+
+                lines.Add(value);
+                
+
+                // Eat up to and including next comma
+                while (pos < lineText.Length && lineText[pos] != ',')
+                    pos++;
+                if (pos < lineText.Length)
+                    pos++;
+            }
+            // Return true if any columns read
+            return lines;
         }
     }
 }

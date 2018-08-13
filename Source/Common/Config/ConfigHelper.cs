@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Web;
-using System.Xml;
 
 namespace Zhoubin.Infrastructure.Common.Config
 {
@@ -12,8 +12,22 @@ namespace Zhoubin.Infrastructure.Common.Config
     /// 配置读取类基类
     /// </summary>
     /// <typeparam name="T">配置对象类型</typeparam>
-    public class ConfigHelper<T> where T : ConfigEntityBase
+    public class ConfigHelper<T> : ConfigHelper where T : ConfigEntityBase, new()
     {
+        /// <summary>
+        /// 设置是否自动生成 配置加密key
+        /// </summary>
+        public static bool EnableAutoGenKey
+        {
+            get
+            {
+                return ConfigEntityBase.EnableAutoGenKey;
+            }
+            set
+            {
+                ConfigEntityBase.EnableAutoGenKey = value;
+            }
+        }
         private readonly ConfigSectionEntity<T> _section;
         /// <summary>
         /// 默认配置
@@ -25,64 +39,68 @@ namespace Zhoubin.Infrastructure.Common.Config
         /// </summary>
         protected List<T> Section { get { return _section.Enities; } }
 
-        /// <summary>
-        /// 加载配置信息
-        /// </summary>
-        /// <param name="information">配置信息</param>
-        /// <returns>返回加载成功的配置信息</returns>
-        protected ConfigSectionEntity<T> LoadSection(SectionInformation information)
-        {
-            return LoadSection<T>(information);
-        }
 
-        private ConfigSectionEntity<T1> LoadSection<T1>(SectionInformation information) where T1 : ConfigEntityBase
-        {
-            var strs = information.Type.Split(",".ToArray(), 2);
-            var handler = (IConfigurationSectionHandler)Assembly.Load(strs[1]).CreateInstance(strs[0]);
-            var doc = new XmlDocument();
-            doc.LoadXml(information.GetRawXml());
-            if (handler != null)
-            {
-                return (ConfigSectionEntity<T1>)handler.Create(null, null, doc.ChildNodes[0]);
-            }
-
-            return null;
-        }
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="sectionName">配置区名称</param>
-        /// <param name="configFile">配置文件路径，当传入null或空时，如果在当前目录或bin目录下存在Common.Config文件，就使用此文件，如果不存在表示从默认配置文件读取</param>
-        public ConfigHelper(string sectionName, string configFile)
+        /// <param name="listConfig">配置为多节点</param>
+        public ConfigHelper(string sectionName, bool listConfig = true)
         {
-            if (string.IsNullOrEmpty(configFile))
+
+            var section = configuration.GetSection(sectionName);
+            ConfigSectionEntity<T> configSectionEntity = new ConfigSectionEntity<T>();
+
+            if (listConfig)
             {
-                configFile = GetConfigFile("Common.Config");
-                if (!File.Exists(configFile))
+                var list = new ServiceCollection()
+                    .AddOptions()
+                    .Configure<List<T>>(section)
+                    .BuildServiceProvider()
+                    .GetService<IOptions<List<T>>>()
+                    .Value;
+                list.ForEach(p =>
                 {
-                    configFile = GetConfigFile("bin\\Common.Config");
-                    if (!File.Exists(configFile))
+                    if (p.EnableCryptography)
                     {
-                        _section = (ConfigSectionEntity<T>)ConfigurationManager.GetSection(sectionName);
-                        return;
+                        p.Decrypt();
                     }
-                }
-            }
+                    p.LockDataSet();
+                });
 
-            var configMap = new ExeConfigurationFileMap { ExeConfigFilename = configFile };
-            var config = ConfigurationManager.OpenMappedExeConfiguration(configMap, ConfigurationUserLevel.None);
-            var configurationSection = config.GetSection(sectionName);
-            if (configurationSection != null)
+                configSectionEntity.Enities = list;
+                configSectionEntity.DefaultConfig = list.FirstOrDefault(p => p.Default);
+            }
+            else
             {
-                _section = LoadSection(configurationSection.SectionInformation);
+                var list = new ServiceCollection()
+                .AddOptions()
+                .Configure<T>(section)
+                .BuildServiceProvider()
+                .GetService<IOptions<T>>()
+                .Value;
+
+                if (list.EnableCryptography)
+                {
+                    list.Decrypt();
+                }
+                list.LockDataSet();
+
+                configSectionEntity.Enities = new List<T> { list };
+                configSectionEntity.DefaultConfig = list;
             }
+
+            if (configSectionEntity.DefaultConfig != null)
+            {
+                configSectionEntity.DefaultConfigName = configSectionEntity.DefaultConfig.Name;
+            }
+            _section = configSectionEntity;
+
+
         }
 
-        private string GetConfigFile(string file)
-        {
-            return HttpContext.Current != null ? HttpContext.Current.Server.MapPath("~\\" + file) : ".\\" + file;
-        }
+
 
         /// <summary>
         /// 根据索引键值取指定的配置
@@ -101,7 +119,7 @@ namespace Zhoubin.Infrastructure.Common.Config
         {
             get
             {
-                if (index <0 || index >Section.Count-1)
+                if (index < 0 || index > Section.Count - 1)
                 {
                     return null;
                 }
@@ -118,25 +136,42 @@ namespace Zhoubin.Infrastructure.Common.Config
         }
     }
 
-    /// <summary>
-    /// 配置区读取辅助类
-    /// </summary>
-    /// <typeparam name="T">要求<see cref="ConfigEntityBase"/>的子类</typeparam>
-    public class ConfigSectionEntity<T> where T : ConfigEntityBase
+
+    public class ConfigHelper
     {
-        /// <summary>
-        /// 读取配置实体列表
-        /// </summary>
-        public List<T> Enities { get; internal set; }
+        public static string GetAppSettings(string key)
+        {
+            var appseetings = configuration.GetSection("appSetting");
+            if (appseetings == null)
+            {
+                return null;
+            }
+            var section = appseetings.GetSection(key);
+            if (section == null)
+            {
+                return null;
+            }
+            return section.Value;
+        }
 
-        /// <summary>
-        /// 默认配置
-        /// </summary>
-        public T DefaultConfig { get; internal set; }
+        protected static IConfiguration configuration;
+        static ConfigHelper()
+        {
+            configuration = CreateConfiguration();
+        }
+        private string GetConfigFile(string file)
+        {
+            return string.Format("{0}{1}{2}", AppContext.BaseDirectory.TrimEnd(Path.PathSeparator), Path.PathSeparator, file);
+        }
 
-        /// <summary>
-        /// 默认配置名称
-        /// </summary>
-        internal string DefaultConfigName { get; set; }
+        private static IConfiguration CreateConfiguration()
+        {
+            return new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", false, true)
+                .AddJsonFile("appsettings_custom.json", true, true)
+                .Build();
+
+        }
     }
 }

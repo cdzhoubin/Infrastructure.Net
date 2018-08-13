@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zhoubin.Infrastructure.Log
+namespace Zhoubin.Infrastructure.Common.Log
 {
     /// <summary>
     /// 日志实体接口

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Net;
-using System.Net.Configuration;
 using System.Net.Mail;
 using System.Text;
 using Zhoubin.Infrastructure.Common.Config;
@@ -19,31 +17,6 @@ namespace Zhoubin.Infrastructure.Common.Tools
     /// </summary>
     public static class EmailHelper
     {
-        private static readonly NetworkCredential NetworkCredentialInstance;
-
-        static EmailHelper()
-        {
-            bool passwordEncrypt = false;
-            string enablePasswordEncrypt = ConfigurationManager.AppSettings["SmtpPasswordEncrypt"];
-            if (!string.IsNullOrEmpty(enablePasswordEncrypt))
-            {
-                passwordEncrypt = enablePasswordEncrypt.ToLower() == "true";
-            }
-            if (passwordEncrypt)
-            {
-                var settings = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
-                if (settings != null)
-                {
-                    string password =  Decryption.Decrypt(settings.Network.Password, ConfigEntityBase.DefaultEncryptionConfigEntity);
-                    string userName = Decryption.Decrypt(settings.Network.UserName,
-                        ConfigEntityBase.DefaultEncryptionConfigEntity);
-                    NetworkCredentialInstance = new NetworkCredential(userName, password);
-                }
-            }
-        }
-        //private string mailFrom, mailDisplayName, mailSubject, mailBody;
-        //private List<string> mailTo, mailCc, mailBcc;
-        //private List<string> mailAttachments;
 
         /// <summary>
         /// 同步发送邮件
@@ -127,13 +100,18 @@ namespace Zhoubin.Infrastructure.Common.Tools
 
             return message;
         }
+
+        private static SmtpClient CreateSmtpClient()
+        {
+            MailConfig helper = new MailConfigHelper().DefaultConfig;
+            var smtpMail = new SmtpClient(helper.Server,helper.Port);
+            smtpMail.Credentials = new NetworkCredential(helper.User,helper.Password);
+            smtpMail.EnableSsl = helper.EnableSsl;
+            return smtpMail;
+        }
         private static bool SendMail(MailMessage message, bool isAsync, object userState = null, SendCompletedEventHandler completeHandler = null)
         {
-            var smtpMail = new SmtpClient();
-            if (NetworkCredentialInstance != null)
-            {
-                smtpMail.Credentials = NetworkCredentialInstance;
-            }
+            var smtpMail = CreateSmtpClient();
             smtpMail.SendCompleted += completeHandler ?? smtpMail_SendCompleted;
 
             try
@@ -150,7 +128,7 @@ namespace Zhoubin.Infrastructure.Common.Tools
             }
             catch (SmtpFailedRecipientException exception)
             {
-                throw new Exception("发送邮件出错，详细信息参考内部错误。", exception);
+                throw new InfrastructureException("发送邮件出错，详细信息参考内部错误。", exception);
             }
             finally
             {
@@ -169,6 +147,77 @@ namespace Zhoubin.Infrastructure.Common.Tools
             if (client != null)
             {
                 client.Dispose();
+            }
+        }
+    }
+
+    public class MailConfigHelper : ConfigHelper<MailConfig>
+    {
+        public MailConfigHelper() : base("MailSetting", false)
+        {
+        }
+    }
+
+    public class MailConfig : ConfigEntityBase
+    {
+        public MailConfig()
+        {
+            Port = 25;
+            Default = true;
+        }
+        public string Server
+        {
+            get
+            {
+                return GetValue<string>("Server");
+            }
+            set
+            {
+                SetValue("Server", value);
+            }
+        }
+        public int Port
+        {
+            get
+            {
+                return GetValue<int>("Port");
+            }
+            set
+            {
+                SetValue("Port", value);
+            }
+        }
+        public bool EnableSsl
+        {
+            get
+            {
+                return GetValue<bool>("EnableSsl");
+            }
+            set
+            {
+                SetValue("EnableSsl", value);
+            }
+        }
+        public string User
+        {
+            get
+            {
+                return GetValue<string>("User");
+            }
+            set
+            {
+                SetValue("User", value);
+            }
+        }
+        public string Password
+        {
+            get
+            {
+                return GetValue<string>("Password");
+            }
+            set
+            {
+                SetValue("Password", value);
             }
         }
     }

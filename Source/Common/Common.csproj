@@ -1,170 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BD659D1B-D047-4050-AFDB-E024099B1003}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Zhoubin.Infrastructure.Common</RootNamespace>
     <AssemblyName>Infrastructure.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <AssemblyOriginatorKeyFile>..\Lib\MyKey.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>6049fde8</NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\Infrastructure.Common.xml</DocumentationFile>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="zxing, Version=1.0.4727.18517, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ZXing.2.1.1\lib\net20\zxing.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.1.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Config\ConfigEntityBase.cs" />
-    <Compile Include="Config\ConfigHelper.cs" />
-    <Compile Include="Config\ConfigurationSectionHandlerHelper.cs" />
-    <Compile Include="Config\EncryptionConfig.cs" />
-    <Compile Include="Config\NamespaceDoc.cs" />
-    <Compile Include="Cryptography\Certificate.cs" />
-    <Compile Include="Cryptography\CryptionConfig.cs" />
-    <Compile Include="Cryptography\Decryption.cs" />
-    <Compile Include="Cryptography\Encryption.cs" />
-    <Compile Include="Cryptography\NamespaceDoc.cs" />
-    <Compile Include="Cryptography\SignData.cs" />
-    <Compile Include="Document\DocumentBase.cs" />
-    <Compile Include="Document\IDocument.cs" />
-    <Compile Include="Document\NamespaceDoc.cs" />
-    <Compile Include="Extent\BitmapExtent.cs" />
-    <Compile Include="Extent\Comparer.cs" />
-    <Compile Include="Extent\DynamicLinq.cs" />
-    <Compile Include="Extent\LinqExtent.cs" />
-    <Compile Include="Extent\NamespaceDoc.cs" />
-    <Compile Include="Extent\ObjectExtent.cs" />
-    <Compile Include="Extent\StringBuilderExtent.cs" />
-    <Compile Include="Extent\StringExtent.cs" />
-    <Compile Include="Gif\NamespaceDoc.cs" />
-    <Compile Include="InfrastructureException.cs" />
-    <Compile Include="Ioc\NamespaceDoc.cs" />
-    <Compile Include="Ioc\ResolverBase.cs" />
-    <Compile Include="Log\Config\LogConfigEntity.cs" />
-    <Compile Include="Log\Config\LogConfigHelper.cs" />
-    <Compile Include="Log\Config\LogService.cs" />
-    <Compile Include="Log\ILogEntity.cs" />
-    <Compile Include="Log\ILogger.cs" />
-    <Compile Include="Log\LogEntity.cs" />
-    <Compile Include="Log\LogEntityBase.cs" />
-    <Compile Include="Log\LogExceptionEntity.cs" />
-    <Compile Include="Log\LogFactory.cs" />
-    <Compile Include="Log\LoggerBase.cs" />
-    <Compile Include="Log\NamespaceDoc.cs" />
-    <Compile Include="Log\Sevenrity.cs" />
-    <Compile Include="NamespaceDoc.cs" />
-    <Compile Include="Repositories\AccessException.cs" />
-    <Compile Include="Repositories\EventArgs\AccessEventArgs.cs" />
-    <Compile Include="Repositories\EventArgs\ActionEventArgs.cs" />
-    <Compile Include="Repositories\EventArgs\CommitEventArgs.cs" />
-    <Compile Include="Repositories\EventArgs\FilterEventArgs.cs" />
-    <Compile Include="Repositories\EventHandler\AccessEventHandler.cs" />
-    <Compile Include="Repositories\EventHandler\ActionEventHandler.cs" />
-    <Compile Include="Repositories\EventHandler\CommitEventHandler.cs" />
-    <Compile Include="Repositories\EventHandler\FilterEventHandler.cs" />
-    <Compile Include="Repositories\IRepository.cs" />
-    <Compile Include="Ioc\IResolver.cs" />
-    <Compile Include="Repositories\IUnitOfWork.cs" />
-    <Compile Include="Repositories\IUnitOfWorkFactory.cs" />
-    <Compile Include="Repositories\NamespaceDoc.cs" />
-    <Compile Include="Repositories\UnitOfWork.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <DependentUpon>Resources.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Tools\CheckIdCard.cs" />
-    <Compile Include="Tools\EmailHelper.cs" />
-    <Compile Include="Tools\Email\EmailAttachment.cs" />
-    <Compile Include="Tools\Email\EmailPictureAttachment.cs" />
-    <Compile Include="Tools\Email\NamespaceDoc.cs" />
-    <Compile Include="Tools\EnumHelper.cs" />
-    <Compile Include="Tools\IEmailAttachment.cs" />
-    <Compile Include="Tools\NamespaceDoc.cs" />
-    <Compile Include="Tools\OptiPNGHelper.cs" />
-    <Compile Include="Tools\Thumbnail.cs" />
-    <Compile Include="Gif\AnimatedGifEncoder.cs" />
-    <Compile Include="Gif\GifDecoder.cs" />
-    <Compile Include="Gif\LZWEncoder.cs" />
-    <Compile Include="Gif\NeuQuant.cs" />
-    <Compile Include="PageInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\QQWry.cs" />
-    <Compile Include="Tools\ZipHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

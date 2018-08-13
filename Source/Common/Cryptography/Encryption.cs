@@ -86,7 +86,7 @@ namespace Zhoubin.Infrastructure.Common.Cryptography
         /// <returns>stream data</returns>
         public static Stream Encrypt(Stream data, string profile, out byte[] key, out byte[] iv, out byte[] signature)
         {
-            var helper = new EncryptionConfigHelper(CryptionConfig.ConfigFile);
+            var helper = new EncryptionConfigHelper();
             var cm = helper[profile];
 
 
@@ -163,7 +163,7 @@ namespace Zhoubin.Infrastructure.Common.Cryptography
         /// <returns>stream data</returns>
         public static Stream Encrypt(Stream data, string profile)
         {
-            var cm = new EncryptionConfigHelper(CryptionConfig.ConfigFile)[profile];
+            var cm = new EncryptionConfigHelper()[profile];
             return Encrypt(data, cm);
         }
 
@@ -175,7 +175,7 @@ namespace Zhoubin.Infrastructure.Common.Cryptography
         /// <returns>encrypted string</returns>
         public static string Encrypt(string data, string profile)
         {
-            var cm = new EncryptionConfigHelper(CryptionConfig.ConfigFile)[profile];
+            var cm = new EncryptionConfigHelper()[profile];
             return Encrypt(data, cm);
         }
 

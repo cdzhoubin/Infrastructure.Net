@@ -6,13 +6,18 @@ using System.Net.Sockets;
 using System.Text;
 using System.Web;
 
-namespace Zhoubin.Infrastructure.Log
+namespace Zhoubin.Infrastructure.Common.Log
 {
     /// <summary>
     /// 日志基类
     /// </summary>
     public class LogEntityBase : ILogEntity
     {
+        static Func<string> _ipFunction;
+        public static void SetIPFunciton(Func<string> func)
+        {
+            _ipFunction = func;
+        }
         /// <summary>
         /// 日志级别
         /// </summary>
@@ -55,7 +60,7 @@ namespace Zhoubin.Infrastructure.Log
         protected virtual void ToString(StringBuilder sb)
         {
             sb.AppendFormat("\n【EventId】{10}\n【Title】{11}\n【Content】{12}\n【CreateTime】{1}\n【Host】{0}\n【FileName】{2}\n【ThreadId】{3}\n【AppDomainName】{4}\n【PorcessId】{5}\n【ProcessName】{6}{7}\n【MachineName】{8}\n【Sevenrity】{9}"
-                , HttpContext.Current != null ? HttpContext.Current.Request.UserHostAddress : IPAddress
+                , _ipFunction == null ? IPAddress :_ipFunction()
                 , CreateTime
                 , FileName
                 , ThreadId
@@ -135,7 +140,7 @@ namespace Zhoubin.Infrastructure.Log
         /// </summary>
         public string FileName
         {
-            get { return Process.GetCurrentProcess().StartInfo.FileName; }
+            get { return Process.GetCurrentProcess().MainModule.FileName; }
         }
         /// <summary>
         /// 线程编号

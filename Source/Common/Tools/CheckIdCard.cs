@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
 
 namespace Zhoubin.Infrastructure.Common.Tools
 {
@@ -10,6 +8,24 @@ namespace Zhoubin.Infrastructure.Common.Tools
     /// </summary>
     public class CheckIdCard
     {
+        ///// <summary>
+        ///// asp.net web form注册脚本方法
+        ///// </summary>
+        //public static void RegisterScript()
+        //{
+        //    var page = HttpContext.Current.CurrentHandler as Page;
+        //    if (page != null)
+        //    {
+        //        page.ClientScript.RegisterClientScriptResource(typeof(ChinaIdCardValidator), ConstHelper.ValidFilePath);
+        //    }
+        //}
+        ///// <summary>
+        ///// 身份证号码错误消息
+        ///// </summary>
+        //public static string ErrorIdCardMessage
+        //{
+        //    get { return Properties.Resources.IdCardTipMessage; }
+        //}
         //位权值数组
         private static readonly byte[] Weight = new byte[17];
         //身份证行政区划代码部分长度

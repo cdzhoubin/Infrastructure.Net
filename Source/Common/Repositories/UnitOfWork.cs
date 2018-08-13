@@ -103,30 +103,21 @@ namespace Zhoubin.Infrastructure.Common.Repositories
         /// <returns>获取当前工作单元，如果不存在就创建一个新的返回</returns>
         private static IUnitOfWork Get()
         {
-            if (HttpContext.Current == null) //非Web环境实现，与线程相关
+            if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
+            //如果当前线程没有名称，就没有工作单元，设置名称
             {
-                if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
-                //如果当前线程没有名称，就没有工作单元，设置名称
-                {
-                    Thread.CurrentThread.Name = Guid.NewGuid().ToString();
-                    return null;
-                }
+                Thread.CurrentThread.Name = Guid.NewGuid().ToString();
+                return null;
+            }
 
-                lock (Threads.SyncRoot) //根据工作线程获取工作单元
-                {
-                    if (Thread.CurrentThread.Name != null && Threads.ContainsKey(Thread.CurrentThread.Name))
-                    {
-                        return (IUnitOfWork)Threads[Thread.CurrentThread.Name];
-                    }
-                }
-            }
-            else
+            lock (Threads.SyncRoot) //根据工作线程获取工作单元
             {
-                if (HttpContext.Current.Items.Contains(HttpContextKey))
+                if (Thread.CurrentThread.Name != null && Threads.ContainsKey(Thread.CurrentThread.Name))
                 {
-                    return (IUnitOfWork)HttpContext.Current.Items[HttpContextKey];
+                    return (IUnitOfWork)Threads[Thread.CurrentThread.Name];
                 }
             }
+
             return null;
         }
 
@@ -136,21 +127,15 @@ namespace Zhoubin.Infrastructure.Common.Repositories
         /// <param name="unitOfWork">保存工作单元</param>
         private static void Save(IUnitOfWork unitOfWork)
         {
-            if (HttpContext.Current == null)
+            if (Thread.CurrentThread.Name == null)
             {
-                if (Thread.CurrentThread.Name == null)
-                {
-                    return;
-                }
-                lock (Threads.SyncRoot)
-                {
-                    Threads[Thread.CurrentThread.Name] = unitOfWork;
-                }
+                return;
             }
-            else
+            lock (Threads.SyncRoot)
             {
-                HttpContext.Current.Items[HttpContextKey] = unitOfWork;
+                Threads[Thread.CurrentThread.Name] = unitOfWork;
             }
+
         }
 
         #endregion
