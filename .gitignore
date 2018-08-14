@@ -163,5 +163,6 @@ $RECYCLE.BIN/
 /Source/Common/BuildNuPackage.cmd
 /dist
 /Source/Sample/.vs/config
-/Source/Sample/MVCSample/Properties/PublishProfiles
+/Source/*/PublishProfiles
 /.vs
+/Source/.vs

@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{9E13998B-7E85-4CD1-96A3-3AD7227DD81D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{9E13998B-7E85-4CD1-96A3-3AD7227DD81D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cache", "Cache", "{BC865357-F45E-4A6F-AA4C-609193902FDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemcachedCache", "Cache\MemcachedCache\MemcachedCache.csproj", "{A7551857-671C-4D9C-BA59-EA5D277FAA5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MemcachedCache", "Cache\MemcachedCache\MemcachedCache.csproj", "{A7551857-671C-4D9C-BA59-EA5D277FAA5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis", "Cache\Redis\Redis.csproj", "{BF73253A-9B83-46BC-B873-D62EC5F517D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redis", "Cache\Redis\Redis.csproj", "{BF73253A-9B83-46BC-B873-D62EC5F517D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{37E66584-47D6-4E81-909B-126C21015CBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Excel", "Document\Excel\Excel.csproj", "{5FE3AB13-B605-45D6-B055-BE3D2ABD995A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Excel", "Document\Excel\Excel.csproj", "{5FE3AB13-B605-45D6-B055-BE3D2ABD995A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PDF", "Document\PDF\PDF.csproj", "{CBB45608-A2FB-491D-B167-15D1C5D74FCD}"
 EndProject
@@ -24,9 +24,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLog", "Log\NLog\NLog.csproj", "{870D3A46-95ED-4A0A-A2AA-217B8CDBE728}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessageQueue", "MessageQueue", "{FC0DFB3B-C1F4-4CC3-8DCA-BD1CC64D80DC}"
-	ProjectSection(SolutionItems) = preProject
-		MessageQueue\ActiveMQ\ActiveMQ.csproj = MessageQueue\ActiveMQ\ActiveMQ.csproj
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka", "MessageQueue\Kafka\Kafka.csproj", "{DB41B272-F743-4AD2-B62B-B68AAD47FBCC}"
 EndProject
@@ -34,21 +31,33 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMQ", "MessageQueue\Ra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ioc", "Ioc", "{5F3D7B6D-99F3-4DF8-AD39-701F1CAE7D30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ninject", "Ioc\Ninject\Ninject.csproj", "{84905F53-F8EF-48D1-8D1C-FC67D050E2D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ninject", "Ioc\Ninject\Ninject.csproj", "{84905F53-F8EF-48D1-8D1C-FC67D050E2D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{FF6980E2-AF07-47E1-94EB-E4B2F35A3718}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mongodb", "Database\Mongodb\Mongodb.csproj", "{EBE7557A-7BBD-4B4E-AC7F-061230D9FCD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mongodb", "Database\Mongodb\Mongodb.csproj", "{EBE7557A-7BBD-4B4E-AC7F-061230D9FCD9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mongodb20", "Database\Mongodb20\Mongodb20.csproj", "{CADD940E-E5DB-4E49-A225-44F2C56A00A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{9B83560B-3370-4486-9482-7E3599CD4D4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongodbRepositories", "Repositories\MongodbRepositories\MongodbRepositories.csproj", "{489E3E42-7DE3-48E4-AB48-822781F53672}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongodbRepositories", "Repositories\MongodbRepositories\MongodbRepositories.csproj", "{489E3E42-7DE3-48E4-AB48-822781F53672}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{0FE1BBF6-C2C5-4776-9B05-99DFB1508B5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentSample", "Sample\DocumentSample\DocumentSample.csproj", "{57338095-9CDC-4870-8ABC-052646824822}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentSample", "Sample\DocumentSample\DocumentSample.csproj", "{57338095-9CDC-4870-8ABC-052646824822}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{EF211E84-163A-4822-A572-307DF3020A47}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{3588CA12-53E1-4D6D-902A-48E0AF632E93}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Web.Core", "Web\Common.Web.Core\Common.Web.Core.csproj", "{92B54770-7947-4A8D-8795-5BD3FBEA2798}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Web.Identity.Mongodb", "Web\Common.Web.Identity.Mongodb\Common.Web.Identity.Mongodb.csproj", "{76FE40F3-DF3B-43E3-9997-6321B3C11F3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Console.Core", "Console\Common.Console.Core\Common.Console.Core.csproj", "{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActiveMQ", "MessageQueue\ActiveMQ\ActiveMQ.csproj", "{81CF8A25-7253-4289-9F40-FECFEA6AE58F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,6 +121,22 @@ Global
 		{57338095-9CDC-4870-8ABC-052646824822}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57338095-9CDC-4870-8ABC-052646824822}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57338095-9CDC-4870-8ABC-052646824822}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92B54770-7947-4A8D-8795-5BD3FBEA2798}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92B54770-7947-4A8D-8795-5BD3FBEA2798}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92B54770-7947-4A8D-8795-5BD3FBEA2798}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92B54770-7947-4A8D-8795-5BD3FBEA2798}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76FE40F3-DF3B-43E3-9997-6321B3C11F3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76FE40F3-DF3B-43E3-9997-6321B3C11F3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76FE40F3-DF3B-43E3-9997-6321B3C11F3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76FE40F3-DF3B-43E3-9997-6321B3C11F3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81CF8A25-7253-4289-9F40-FECFEA6AE58F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81CF8A25-7253-4289-9F40-FECFEA6AE58F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81CF8A25-7253-4289-9F40-FECFEA6AE58F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81CF8A25-7253-4289-9F40-FECFEA6AE58F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,6 +155,10 @@ Global
 		{CADD940E-E5DB-4E49-A225-44F2C56A00A5} = {FF6980E2-AF07-47E1-94EB-E4B2F35A3718}
 		{489E3E42-7DE3-48E4-AB48-822781F53672} = {9B83560B-3370-4486-9482-7E3599CD4D4C}
 		{57338095-9CDC-4870-8ABC-052646824822} = {0FE1BBF6-C2C5-4776-9B05-99DFB1508B5D}
+		{92B54770-7947-4A8D-8795-5BD3FBEA2798} = {EF211E84-163A-4822-A572-307DF3020A47}
+		{76FE40F3-DF3B-43E3-9997-6321B3C11F3E} = {EF211E84-163A-4822-A572-307DF3020A47}
+		{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4} = {3588CA12-53E1-4D6D-902A-48E0AF632E93}
+		{81CF8A25-7253-4289-9F40-FECFEA6AE58F} = {FC0DFB3B-C1F4-4CC3-8DCA-BD1CC64D80DC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {127FC33F-9184-4331-A078-BB65BB3DA928}
