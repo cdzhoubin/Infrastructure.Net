@@ -55,9 +55,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Web.Core", "Web\Comm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Web.Identity.Mongodb", "Web\Common.Web.Identity.Mongodb\Common.Web.Identity.Mongodb.csproj", "{76FE40F3-DF3B-43E3-9997-6321B3C11F3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Console.Core", "Console\Common.Console.Core\Common.Console.Core.csproj", "{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Console.Core", "Console\Common.Console.Core\Common.Console.Core.csproj", "{EE9FA0DB-2AB3-4689-95C4-929DE6BFACE4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActiveMQ", "MessageQueue\ActiveMQ\ActiveMQ.csproj", "{81CF8A25-7253-4289-9F40-FECFEA6AE58F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{584BD2EB-5321-4FF5-935D-3840985B56D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Consul", "Common.Consul\Common.Consul.csproj", "{C0BEC018-F8A3-4CFE-BD2B-AB552553FE25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,6 +141,10 @@ Global
 		{81CF8A25-7253-4289-9F40-FECFEA6AE58F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81CF8A25-7253-4289-9F40-FECFEA6AE58F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81CF8A25-7253-4289-9F40-FECFEA6AE58F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0BEC018-F8A3-4CFE-BD2B-AB552553FE25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0BEC018-F8A3-4CFE-BD2B-AB552553FE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0BEC018-F8A3-4CFE-BD2B-AB552553FE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0BEC018-F8A3-4CFE-BD2B-AB552553FE25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
