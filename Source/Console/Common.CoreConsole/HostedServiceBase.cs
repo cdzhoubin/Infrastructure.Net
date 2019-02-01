@@ -4,14 +4,21 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Zhoubin.Infrastructure.Common.Console.Core
+namespace Zhoubin.Infrastructure.Common.CoreConsole
 {
+    /// <summary>
+    /// 服务配置基类
+    /// 实现基本的独立执行和循环执行
+    /// </summary>
+    /// <typeparam name="T">服务类型</typeparam>
     public abstract class HostedServiceBase<T> : IHostedService, IDisposable
         where T : class, IHostedService
     {
-        public ILogger Logger { get { return _logger; } }
-        private readonly ILogger _logger;
-        private int _sleepTime;
+        public ILogger Logger { get; }
+
+        public bool IsRunning { get; set; }
+
+        private readonly int _sleepTime;
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -19,10 +26,11 @@ namespace Zhoubin.Infrastructure.Common.Console.Core
         /// <param name="sleepTime">休眠时间，如果为0表示执行单次，大于0表示循环执行的</param>
         protected HostedServiceBase(ILogger<T> logger, int sleepTime)
         {
-            _logger = logger;
+            Logger = logger;
             _sleepTime = sleepTime < 0 ? 0 : sleepTime;
         }
         private Task _task;
+        private CancellationToken _cancellationToken;
         public void Dispose()
         {
             if (_task != null)
@@ -33,47 +41,47 @@ namespace Zhoubin.Infrastructure.Common.Console.Core
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Starting");
+            Logger.LogInformation("Starting");
             _task = CreateWorkTask(cancellationToken);
             _task.Start();
-            _logger.LogInformation("Started");
-            return _task;
+            Logger.LogInformation("Started");
+            return Task.CompletedTask;
         }
 
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Stopping.");
-            _isRunning = false;
-            _logger.LogInformation("Stopped.");
-            return Task.CompletedTask; ;
+            Logger.LogInformation("Stopping.");
+            IsRunning = false;
+            Logger.LogInformation("Stopped.");
+            return Task.CompletedTask;
         }
         protected virtual Task CreateWorkTask(CancellationToken cancellationToken)
         {
             Task task = _sleepTime == 0 ? new Task(DoWork, cancellationToken): new Task(DoWhileWork, cancellationToken);
-
+            _cancellationToken = cancellationToken;
             return task;
         }
 
         private void DoWhileWork()
         {
-            _isRunning = true;
-            while (_isRunning)
+            IsRunning = true;
+            while (IsRunning && !_cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    _logger.LogInformation("任务执行开始...");
+                    Logger.LogInformation("任务执行开始...");
                     DoWork();
-                    _logger.LogInformation("任务执行完成.");
+                    Logger.LogInformation("任务执行完成.");
                 }
                 catch (ThreadAbortException)
                 {
-                    _isRunning = false;
+                    IsRunning = false;
                     continue;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "执行任务出错。");
+                    Logger.LogError(ex, "执行任务出错。");
                 }
                 try
                 {
@@ -81,13 +89,10 @@ namespace Zhoubin.Infrastructure.Common.Console.Core
                 }
                 catch (ThreadAbortException)
                 {
-                    _isRunning = false;
+                    IsRunning = false;
                 }
             }
         }
         protected abstract void DoWork();
-
-
-        private bool _isRunning;
     }
 }

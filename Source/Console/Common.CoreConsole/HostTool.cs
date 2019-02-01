@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Zhoubin.Infrastructure.Common.Console.Core
+namespace Zhoubin.Infrastructure.Common.CoreConsole
 {
     /// <summary>
     /// 控制台启动应用工具
@@ -18,7 +18,7 @@ namespace Zhoubin.Infrastructure.Common.Console.Core
         /// 使用方法
         ///public static async Task Main(string[] args)
         ///{
-        ///    await HostTool.CreateHostBuilder<T>(args);
+        ///    await HostTool.Host<T>(args);
         ///}
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -58,7 +58,7 @@ namespace Zhoubin.Infrastructure.Common.Console.Core
 
                     var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                     var configFile = "appsettings.json";
-                    if (string.IsNullOrEmpty(environmentName))
+                    if (!string.IsNullOrEmpty(environmentName))
                     {
                         configFile = string.Format("appsettings.{0}.json", environmentName);
                     }

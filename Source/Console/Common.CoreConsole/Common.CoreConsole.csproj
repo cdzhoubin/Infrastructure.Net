@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>Zhoubin.Infrastructure.Common.Console.Core</RootNamespace>
-    <AssemblyName>Infrastructure.Common.Console.Core</AssemblyName>
+    <AssemblyName>Infrastructure.Common.CoreConsole</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
