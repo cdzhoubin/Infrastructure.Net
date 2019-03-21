@@ -58,7 +58,7 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
         }
         protected virtual Task CreateWorkTask(CancellationToken cancellationToken)
         {
-            Task task = _sleepTime == 0 ? new Task(DoWork, cancellationToken): new Task(DoWhileWork, cancellationToken);
+            Task task = _sleepTime == 0 ? new Task(DoWork, cancellationToken) : new Task(DoWhileWork, cancellationToken);
             _cancellationToken = cancellationToken;
             return task;
         }
@@ -83,14 +83,7 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
                 {
                     Logger.LogError(ex, "执行任务出错。");
                 }
-                try
-                {
-                    Thread.Sleep((int)_sleepTime);
-                }
-                catch (ThreadAbortException)
-                {
-                    IsRunning = false;
-                }
+                Task.Delay(TimeSpan.FromMilliseconds(_sleepTime), _cancellationToken);
             }
         }
         protected abstract void DoWork();

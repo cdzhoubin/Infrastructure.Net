@@ -24,7 +24,7 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
         /// <typeparam name="T"></typeparam>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static async Task Host<T>(string[] args) where T : class, IHostedService
+        public static async Task HostAsync<T>(string[] args) where T : class, IHostedService
         {
             var builder = CreateHostBuilder<T, TaskSetting>(args, null);
             await builder.RunConsoleAsync();
@@ -33,7 +33,28 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
         /// <typeparam name="T"></typeparam>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static async Task Host<T,TSetting>(string[] args,string settingName) 
+        public static void Host<T>(string[] args) where T : class, IHostedService
+        {
+            var builder = CreateHostBuilder<T, TaskSetting>(args, null);
+            builder.Build().Run();
+        }
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static void Host<T, TSetting>(string[] args, string settingName)
+            where T : class, IHostedService
+            where TSetting : class
+        {
+            var builder = CreateHostBuilder<T, TSetting>(args, settingName);
+
+            builder.Build().Run();
+        }
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public static async Task HostAsync<T,TSetting>(string[] args,string settingName) 
             where T : class, IHostedService
             where TSetting:class
         {
