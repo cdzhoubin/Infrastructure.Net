@@ -33,14 +33,17 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
         private CancellationToken _cancellationToken;
         public void Dispose()
         {
-            if (_task != null)
-            {
-                _task.Dispose();
-            }
+            //if (_task != null)
+            //{
+            //    _task.Dispose();
+            //}
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            Logger.LogInformation("Init...");
+            Init();
+            Logger.LogInformation("Init complete");
             Logger.LogInformation("Starting");
             _task = CreateWorkTask(cancellationToken);
             _task.Start();
@@ -65,14 +68,17 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
 
         private void DoWhileWork()
         {
+            SendEvent(new HostEventArgs(HostStatus.Begin));
             IsRunning = true;
             while (IsRunning && !_cancellationToken.IsCancellationRequested)
             {
                 try
                 {
+                    SendEvent(new HostEventArgs(HostStatus.StartExcue));
                     Logger.LogInformation("任务执行开始...");
                     DoWork();
                     Logger.LogInformation("任务执行完成.");
+                    SendEvent(new HostEventArgs(HostStatus.EndExcue));
                 }
                 catch (ThreadAbortException)
                 {
@@ -81,11 +87,54 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
                 }
                 catch (Exception ex)
                 {
+                    SendEvent(new HostEventArgs(HostStatus.Error));
                     Logger.LogError(ex, "执行任务出错。");
                 }
-                Task.Delay(TimeSpan.FromMilliseconds(_sleepTime), _cancellationToken);
+                var task = Task.Delay(TimeSpan.FromMilliseconds(_sleepTime), _cancellationToken);                
+                task.Wait();
+            }
+
+            SendEvent(new HostEventArgs(HostStatus.End));
+        }
+        EventHandler<HostEventArgs> _eventHandler;
+        public event EventHandler<HostEventArgs> EventHandler
+        {
+            add
+            {
+                _eventHandler += value;
+            }
+            remove
+            {
+                _eventHandler -= value;
+            }
+        }
+        protected void SendEvent(HostEventArgs args)
+        {
+            EventHandler<HostEventArgs> eventHandler = _eventHandler;
+            if (eventHandler != null)
+            {
+                eventHandler.BeginInvoke(this, args, null, null);
             }
         }
         protected abstract void DoWork();
+        protected virtual void Init() { }
+    }
+
+    public sealed class HostEventArgs : EventArgs
+    {
+        public HostStatus Status { get; }
+
+        public HostEventArgs(HostStatus hostStatus)
+        {
+            Status = hostStatus;
+        }
+    }
+    public enum HostStatus
+    {
+        Begin,
+        StartExcue,
+        EndExcue,
+        Error,
+        End
     }
 }

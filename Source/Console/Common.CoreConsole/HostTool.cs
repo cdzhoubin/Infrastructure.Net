@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,11 +24,12 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="args"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task HostAsync<T>(string[] args) where T : class, IHostedService
+        public static async Task Host<T>(string[] args, CancellationToken cancellationToken) where T : class, IHostedService
         {
             var builder = CreateHostBuilder<T, TaskSetting>(args, null);
-            await builder.RunConsoleAsync();
+            await builder.RunConsoleAsync(cancellationToken);
         }
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -54,51 +56,57 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
         /// <typeparam name="T"></typeparam>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static async Task HostAsync<T,TSetting>(string[] args,string settingName) 
+        public static async Task Host<T, TSetting>(string[] args, string settingName,CancellationToken cancellationToken)
             where T : class, IHostedService
-            where TSetting:class
+            where TSetting : class
         {
-            var builder = CreateHostBuilder<T,TSetting>(args,settingName);
+            var builder = CreateHostBuilder<T, TSetting>(args, settingName);
 
-            await builder.RunConsoleAsync();
+            await builder.RunConsoleAsync(cancellationToken);
         }
 
+        public static IHost CreateHost<T, TSetting>(string[] args, string settingName)
+            where T : class, IHostedService
+            where TSetting : class
+        {
+            return CreateHostBuilder<T, TSetting>(args, settingName).Build();
+        }
         private static IHostBuilder CreateHostBuilder<T, TSetting>(string[] args, string settingName)
             where T : class, IHostedService
             where TSetting : class
         {
-          return  new HostBuilder()
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    config.AddEnvironmentVariables();
+            return new HostBuilder()
+                  .ConfigureAppConfiguration((hostingContext, config) =>
+                  {
+                      config.AddEnvironmentVariables();
 
-                    if (args != null)
-                    {
-                        config.AddCommandLine(args);
-                    }
+                      if (args != null)
+                      {
+                          config.AddCommandLine(args);
+                      }
 
-                    var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                    var configFile = "appsettings.json";
-                    if (!string.IsNullOrEmpty(environmentName))
-                    {
-                        configFile = string.Format("appsettings.{0}.json", environmentName);
-                    }
-                    config.AddJsonFile(configFile, optional: true);
-                })
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddOptions();
-                    if (!string.IsNullOrEmpty(settingName))
-                    {
-                        services.Configure<TSetting>(hostContext.Configuration.GetSection(settingName));
-                    }
-                    services.AddSingleton<IHostedService, T>();
-                })
-                .ConfigureLogging((hostingContext, logging) =>
-                {
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
-                });
+                      var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                      var configFile = "appsettings.json";
+                      if (!string.IsNullOrEmpty(environmentName))
+                      {
+                          configFile = string.Format("appsettings.{0}.json", environmentName);
+                      }
+                      config.AddJsonFile(configFile, optional: true);
+                  })
+                  .ConfigureServices((hostContext, services) =>
+                  {
+                      services.AddOptions();
+                      if (!string.IsNullOrEmpty(settingName))
+                      {
+                          services.Configure<TSetting>(hostContext.Configuration.GetSection(settingName));
+                      }
+                      services.AddSingleton<IHostedService, T>();
+                  })
+                  .ConfigureLogging((hostingContext, logging) =>
+                  {
+                      logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                      logging.AddConsole();
+                  });
         }
     }
 }

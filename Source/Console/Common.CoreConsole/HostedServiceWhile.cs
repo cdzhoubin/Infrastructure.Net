@@ -31,6 +31,15 @@ namespace Zhoubin.Infrastructure.Common.CoreConsole
             DoWork(setting);
         }
         protected abstract void DoWork(TConfig config);
+
+        protected override void Init()
+        {
+            Init(setting);
+        }
+        protected virtual void Init(TConfig config)
+        {
+            
+        }
     }
 
     public class TaskSetting
