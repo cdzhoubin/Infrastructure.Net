@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.CoreConsole", "Conso
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.CoreConsole.Sample", "Sample\Common.CoreConsole.Sample\Common.CoreConsole.Sample.csproj", "{5D87B930-0D90-409C-88A4-3DAB7F2A7984}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Test", "Test\Common.Test\Common.Test.csproj", "{2102AF2B-FF69-4630-A308-D886C8AEB904}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,6 +153,10 @@ Global
 		{5D87B930-0D90-409C-88A4-3DAB7F2A7984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D87B930-0D90-409C-88A4-3DAB7F2A7984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D87B930-0D90-409C-88A4-3DAB7F2A7984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2102AF2B-FF69-4630-A308-D886C8AEB904}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2102AF2B-FF69-4630-A308-D886C8AEB904}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2102AF2B-FF69-4630-A308-D886C8AEB904}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2102AF2B-FF69-4630-A308-D886C8AEB904}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -174,6 +180,7 @@ Global
 		{81CF8A25-7253-4289-9F40-FECFEA6AE58F} = {FC0DFB3B-C1F4-4CC3-8DCA-BD1CC64D80DC}
 		{390B60F6-9134-4839-A008-E54F7A0A633E} = {3588CA12-53E1-4D6D-902A-48E0AF632E93}
 		{5D87B930-0D90-409C-88A4-3DAB7F2A7984} = {0FE1BBF6-C2C5-4776-9B05-99DFB1508B5D}
+		{2102AF2B-FF69-4630-A308-D886C8AEB904} = {584BD2EB-5321-4FF5-935D-3840985B56D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {127FC33F-9184-4331-A078-BB65BB3DA928}
