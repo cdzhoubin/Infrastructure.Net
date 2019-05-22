@@ -14,7 +14,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// <returns>实现了IFileStorage存储的类型</returns>
         public static IFileStorage CreateFileStorage(string name)
         {
-            return CreateStorage<IFileStorage>(name);
+            return CreateStorage<IFileStorage>(string.IsNullOrEmpty(name) ? "File" : name);
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// <returns>实现了IObjectStorage存储的类型</returns>
         public static IObjectStorage CreateObjectStorage(string name)
         {
-            return CreateStorage<IObjectStorage>(name);
+            return CreateStorage<IObjectStorage>(string.IsNullOrEmpty(name) ? "Object" : name);
         }
 
         private static T CreateStorage<T>(string name)

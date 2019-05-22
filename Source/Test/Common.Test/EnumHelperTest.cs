@@ -47,5 +47,14 @@ namespace Common.Test
             Assert.AreEqual("管理员", result[2]);
             Assert.AreEqual("成员", result[3]);
         }
+        [TestMethod]
+        public void TestGetEnumDefaultDictionary_1()
+        {
+            var result = EnumHelper.GetEnumDefaultDictionary<TestEnum>();
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual("None", result[1]);
+            Assert.AreEqual("Admin", result[2]);
+            Assert.AreEqual("Member", result[3]);
+        }
     }
 }

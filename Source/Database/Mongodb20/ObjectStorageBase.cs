@@ -79,13 +79,14 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
 
         protected GridFSFileInfo GetGridFsFile(GridFSBucket gridFS, ObjectId id, bool nullThrowException = true)
         {
-            var filter = Builders<GridFSFileInfo>.Filter.Where(p => p.Id == id);
-            var fs = gridFS.Find(filter).FirstOrDefault();
-            if (fs == null && nullThrowException == true)
+            var fs = gridFS.OpenDownloadStream(id);            
+            //var filter = Builders<GridFSFileInfo>.Filter.Where(p => p.Id == id);
+            //var fs = gridFS.Find(filter).FirstOrDefault();
+            if ((fs == null || fs.FileInfo == null) && nullThrowException == true)
             {
                 throw new MongoException(string.Format(FileNotExistsErrorMessage, id, gridFS.Database.DatabaseNamespace.DatabaseName));
             }
-            return fs;
+            return fs.FileInfo;
         }
         protected T GetDocument<T>(ObjectId id, bool nullThrowException = true) where T : IMetaEntity, new()
         {
@@ -105,24 +106,26 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
                 return "标识为{0}文件在数据库{1}中没有找到。";
             }
         }
-        protected virtual string DocumentNotExistsErrorMessage{
-        get {
+        protected virtual string DocumentNotExistsErrorMessage
+        {
+            get
+            {
                 return "标识为{0}在数据库中没有找到。";
             }
         }
 
-        protected FilterDefinition<T> ConvertDictionaryToFilterDefinition<T>( IDictionary<string, object> dic)
+        protected FilterDefinition<T> ConvertDictionaryToFilterDefinition<T>(IDictionary<string, object> dic)
         {
-            if(dic == null && dic.Count == 0)
+            if (dic == null && dic.Count == 0)
             {
                 return Builders<T>.Filter.Empty;
             }
-            if(dic.Count == 1)
+            if (dic.Count == 1)
             {
                 return Builders<T>.Filter.Eq(dic.Keys.First(), dic[dic.Keys.First()]);
             }
             List<FilterDefinition<T>> list = new List<FilterDefinition<T>>();
-            foreach(var key in dic.Keys)
+            foreach (var key in dic.Keys)
             {
                 list.Add(Builders<T>.Filter.Eq(key, dic[key]));
             }
@@ -137,7 +140,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
             }
             if (dic.Count == 1)
             {
-                return dic[dic.Keys.First()] ? Builders<T>.Sort.Ascending(dic.Keys.First()): Builders<T>.Sort.Descending(dic.Keys.First());
+                return dic[dic.Keys.First()] ? Builders<T>.Sort.Ascending(dic.Keys.First()) : Builders<T>.Sort.Descending(dic.Keys.First());
             }
             List<SortDefinition<T>> list = new List<SortDefinition<T>>();
             foreach (var key in dic.Keys)
@@ -202,7 +205,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// </summary>
         protected TMongoDatabase DataBase
         {
-            get { return _db == null ? (_db = GetDataBase()):_db; }
+            get { return _db == null ? (_db = GetDataBase()) : _db; }
         }
 
         private Config _config;
@@ -334,7 +337,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         {
             return action();
         }
-        
+
 
         public abstract void Dispose();
     }

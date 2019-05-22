@@ -345,11 +345,9 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
 
         public void DownLoad<T>(ObjectId id, string saveFile) where T : IMetaEntity, new()
         {
-            var info = GetDocument<T>(id);
-            var gridfs = GetGridFS(info.Database);
-            var fs = GetGridFsFile(gridfs, info.Id);
+            var gridfs = GetDownloadGridFSBucket<T>(id);
             using (var stream = new FileStream(saveFile, FileMode.OpenOrCreate))
-                GridFS.DownloadToStream(id, stream);
+                gridfs.DownloadToStream(id, stream);
         }
 
         /// <summary>
@@ -428,7 +426,15 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
             stream.Position = 0;
             return stream;
         }
-
+        private GridFSBucket GetDownloadGridFSBucket<T>(ObjectId id) where T : IMetaEntity, new()
+        {
+            var info = GetDocument<T>(id);
+            if(info == null)
+            {
+                throw new MongoException(string.Format("编号为{0}的文件未找到。", id));
+            }
+            return string.IsNullOrEmpty(info.Database) ? GridFS : GetGridFS(info.Database);
+        }
 
     }
 }
