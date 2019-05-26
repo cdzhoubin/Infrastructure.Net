@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -157,7 +158,38 @@ namespace Zhoubin.Infrastructure.Common.Tools
                 }
             }
         }
+        /// <summary>
+        /// 解压文件到指定目录
+        /// </summary>
+        /// <param name="stream">输入压缩文件流</param>
+        /// <param name="folder">目标目录</param>
+        /// <param name="password">密码</param>
+        /// <exception cref="FileNotFoundException">文件不存在时，抛出此异常</exception>
+        public static void UnZipFolder(Stream stream, string folder, string password = null)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException("stream");
+            }
 
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            stream.Position = 0;
+            using (var zip = ZipFile.Read(stream))
+            {
+                if (!string.IsNullOrEmpty(password))
+                {
+                    zip.Password = password;
+                }
+
+                foreach (var entry in zip)
+                {
+                    entry.Extract(folder);
+                }
+            }
+        }
         /// <summary>
         /// 压缩字符串
         /// </summary>

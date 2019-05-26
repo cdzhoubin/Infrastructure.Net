@@ -4,19 +4,23 @@ using System.Text;
 
 namespace Zhoubin.Infrastructure.Common
 {
-    /// <summary>
-    /// 返回结果
-    /// </summary>
-    public class Result
+    public abstract class ResultBase<TError>
     {
         /// <summary>
         /// 成功返回true,其它返回false
         /// </summary>
-        public bool IsSucess { get; private set; }
+        public bool IsSucess { get; protected set; }
         /// <summary>
         /// 当出错时，返回错误描述信息
         /// </summary>
-        public string ErrorMessage { get; private set; }
+        public TError ErrorMessage { get; protected set; }
+    }
+    /// <summary>
+    /// 返回结果
+    /// </summary>
+    public class Result:ResultBase<string>
+    {
+        
         /// <summary>
         /// 创建成功对象
         /// </summary>
