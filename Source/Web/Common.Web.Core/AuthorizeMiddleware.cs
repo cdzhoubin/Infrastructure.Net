@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,27 +13,32 @@ namespace Zhoubin.Infrastructure.Common.Web
     public class AuthorizeMiddleware
     {
         private readonly Func<string, List<string>> _queryUserRoles;
-        public AuthorizeMiddleware(Func<string, List<string>> queryUserRoles)
-        {
-            _queryUserRoles = queryUserRoles;
-        }
         private readonly RequestDelegate _next;
 
-        public AuthorizeMiddleware(RequestDelegate next)
+        public AuthorizeMiddleware(RequestDelegate next, Func<string, List<string>> queryUserRoles)
         {
-            _next = next;
+            _next = next; _queryUserRoles = queryUserRoles;
         }
 
         public Task Invoke(HttpContext httpContext)
         {
-            var identity = httpContext.User.Identity;
-            if (identity.IsAuthenticated)
+            if (httpContext.User != null && httpContext.User.Identity != null)
             {
-                var roles = _queryUserRoles(identity.Name);
-                foreach (var role in roles)
-                    httpContext.User.AddIdentity(new ClaimsIdentity("Basic", ClaimTypes.Role, role));
+                var identity = httpContext.User.Identity;
+                if (identity.IsAuthenticated)
+                {
+                    ClaimsIdentity ci = identity as ClaimsIdentity;
+                    if (ci != null)
+                    {
+                        foreach (var c in ci.Claims.Where(p => p.Type == ClaimsIdentity.DefaultRoleClaimType).ToList())
+                        {
+                            ci.RemoveClaim(c);
+                        }
+                    }
+                    var roles = _queryUserRoles(identity.Name);
+                    httpContext.User = new GenericPrincipal(ci, roles.ToArray());
+                }
             }
-
             return _next(httpContext);
         }
     }
