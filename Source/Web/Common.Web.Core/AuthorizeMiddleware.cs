@@ -14,10 +14,13 @@ namespace Zhoubin.Infrastructure.Common.Web
     {
         private readonly Func<string, List<string>> _queryUserRoles;
         private readonly RequestDelegate _next;
+        private readonly Func<IIdentity, IIdentity> _changeIdentity;
 
-        public AuthorizeMiddleware(RequestDelegate next, Func<string, List<string>> queryUserRoles)
+        public AuthorizeMiddleware(RequestDelegate next, Func<string, List<string>> queryUserRoles, Func<IIdentity, IIdentity> changeIdentity)
         {
-            _next = next; _queryUserRoles = queryUserRoles;
+            _next = next;
+            _queryUserRoles = queryUserRoles;
+            _changeIdentity = changeIdentity;
         }
 
         public Task Invoke(HttpContext httpContext)
@@ -27,16 +30,24 @@ namespace Zhoubin.Infrastructure.Common.Web
                 var identity = httpContext.User.Identity;
                 if (identity.IsAuthenticated)
                 {
-                    ClaimsIdentity ci = identity as ClaimsIdentity;
-                    if (ci != null)
+                    var id1 = _changeIdentity(identity);
+                    if (_queryUserRoles != null)
                     {
-                        foreach (var c in ci.Claims.Where(p => p.Type == ClaimsIdentity.DefaultRoleClaimType).ToList())
+                        ClaimsIdentity ci = id1 as ClaimsIdentity;
+                        if (ci != null)
                         {
-                            ci.RemoveClaim(c);
+                            foreach (var c in ci.Claims.Where(p => p.Type == ClaimsIdentity.DefaultRoleClaimType).ToList())
+                            {
+                                ci.RemoveClaim(c);
+                            }
                         }
+                        var roles = _queryUserRoles(identity.Name);
+                        httpContext.User = new GenericPrincipal(id1, roles.ToArray());
                     }
-                    var roles = _queryUserRoles(identity.Name);
-                    httpContext.User = new GenericPrincipal(ci, roles.ToArray());
+                    else
+                    {
+                        httpContext.User = new GenericPrincipal(id1, new string[0]);
+                    }
                 }
             }
             return _next(httpContext);
@@ -46,9 +57,14 @@ namespace Zhoubin.Infrastructure.Common.Web
     // Extension method used to add the middleware to the HTTP request pipeline.
     public static class AuthorizeMiddlewareExtensions
     {
+        public static IApplicationBuilder UseAuthorizeMiddleware(this IApplicationBuilder builder, Func<IIdentity, IIdentity> changeIdentity, Func<string, List<string>> queryUserRoles = null)
+        {
+            return builder.UseMiddleware<AuthorizeMiddleware>(queryUserRoles, changeIdentity);
+        }
         public static IApplicationBuilder UseAuthorizeMiddleware(this IApplicationBuilder builder, Func<string, List<string>> queryUserRoles)
         {
-            return builder.UseMiddleware<AuthorizeMiddleware>(queryUserRoles);
+            Func<IIdentity, IIdentity> changeIdentity = identity => identity;
+            return UseAuthorizeMiddleware(builder, changeIdentity, queryUserRoles);
         }
     }
 }

@@ -393,7 +393,8 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
 
         private GridFSFileInfo FindOneById(ObjectId id)
         {
-            return GridFS.Find(Builders<GridFSFileInfo>.Filter.Where(p => p.Id == id)).FirstOrDefault();
+            var info = GetGridFsFile(GridFS, id);
+            return info;
         }
         /// <summary>
         /// 下载文件
@@ -421,7 +422,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
             }
 
             var stream = new MemoryStream();
-            GridFS.DownloadToStreamAsync(id, stream);
+            GridFS.DownloadToStream(id, stream);
 
             stream.Position = 0;
             return stream;
