@@ -1237,5 +1237,22 @@ namespace Zhoubin.Infrastructure.Common.Extent
             // Return true if any columns read
             return lines;
         }
+
+        public static string PinYinInitials(this string text)
+        {
+            return PinYinHelper.GetInitials(text);
+        }
+        public static string PinYinInitials(this string text, Encoding encoding)
+        {
+            return PinYinHelper.GetInitials(text,encoding);
+        }
+        public static string PinYin(this string text)
+        {
+            return PinYinHelper.GetPinyin(text);
+        }
+        public static string PinYin(this string text, Encoding encoding)
+        {
+            return PinYinHelper.GetPinyin(text, encoding);
+        }
     }
 }
