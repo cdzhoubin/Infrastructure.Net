@@ -314,15 +314,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         }
 
 
-        /// <summary>
-        /// 下载文件
-        /// </summary>
-        /// <param name="condition">下载字典条件</param>
-        /// <returns>返回下载流数据</returns>
-        public Stream DownLoad(IDictionary<string, object> condition)
-        {
-            throw new InstrumentationException("此方法在Doc元数据存储中无法实现，请使用泛型方法");
-        }
+        
 
 
 
@@ -350,15 +342,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
                 gridfs.DownloadToStream(id, stream);
         }
 
-        /// <summary>
-        /// 下载文件
-        /// </summary>
-        /// <param name="condition">下载字典条件</param>
-        /// <param name="saveFile">保存文件到指定目录</param>
-        public void DownLoad(IDictionary<string, object> condition, string saveFile)
-        {
-            throw new InstrumentationException("此方法在Doc元数据存储中无法实现，请使用泛型方法");
-        }
+        
         /// <summary>
         /// 下载文件
         /// </summary>
@@ -430,12 +414,92 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         private GridFSBucket GetDownloadGridFSBucket<T>(ObjectId id) where T : IMetaEntity, new()
         {
             var info = GetDocument<T>(id);
-            if(info == null)
+            if (info == null)
             {
                 throw new MongoException(string.Format("编号为{0}的文件未找到。", id));
             }
             return string.IsNullOrEmpty(info.Database) ? GridFS : GetGridFS(info.Database);
         }
 
+        public T FindById<T>(string id) where T : IMetaEntity, new()
+        {
+            EnsureIdNotNull(id);
+            return FindById<T>(new ObjectId(id));
+        }
+
+        private void EnsureIdNotNull(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentNullException("id");
+            }
+        }
+        public bool Any<T>(Expression<Func<T, bool>> where) where T : IMetaEntity, new()
+        {
+            return Excute(() =>
+            {
+                return GetCollection<T>().AsQueryable().Where(where).Any();
+            });
+        }
+
+        public List<T> FindByQuery<T>(Expression<Func<T, bool>> where) where T : IMetaEntity, new()
+        {
+            return Excute(() =>
+            {
+                return GetCollection<T>().AsQueryable().Where(where).Select(p=>p).ToList();
+            });
+        }
+
+        public void DownLoad<T>(Expression<Func<T, bool>> where, string saveFile) where T : IMetaEntity, new()
+        {
+            Excute(() =>
+            {
+                var id = GetCollection<T>().AsQueryable().Where(where).Select(p => p.Id).FirstOrDefault();
+                if (id == ObjectId.Empty)
+                {
+                    throw new FileNotFoundException("文件不存在。");
+                }
+                using (var stream = new FileStream(saveFile, FileMode.OpenOrCreate))
+                {
+                    GridFS.DownloadToStream(id, stream);
+                }
+            });
+        }
+
+        public Stream DownLoad<T>(Expression<Func<T, bool>> where) where T : IMetaEntity, new()
+        {
+            return Excute(() =>
+            {
+                var id =  GetCollection<T>().AsQueryable().Where(where).Select(p=>p.Id).FirstOrDefault();
+                if(id ==  ObjectId.Empty)
+                {
+                    throw new FileNotFoundException("文件不存在。");
+                }
+                var stream = new MemoryStream();
+                GridFS.DownloadToStream(id, stream);
+
+                stream.Position = 0;
+                return stream;
+            });
+        }
+
+        public Stream DownLoad<T>(string id) where T : IMetaEntity, new()
+        {
+            EnsureIdNotNull(id);
+            return DownLoad<T>(new ObjectId(id));
+        }
+
+        public void DownLoad<T>(string id, string saveFile) where T : IMetaEntity, new()
+        {
+            EnsureIdNotNull(id);
+            DownLoad(new ObjectId(id), saveFile);
+        }
+
+
+        public Stream DownLoad(string id)
+        {
+            EnsureIdNotNull(id);
+            return DownLoad(new ObjectId(id));
+        }
     }
 }

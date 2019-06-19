@@ -47,6 +47,13 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// <returns>返回查询结果</returns>
         T FindById<T>(ObjectId id) where T : IMetaEntity, new();
         /// <summary>
+        /// 根据指定的Id查询文件元数据
+        /// </summary>
+        /// <param name="id">标识</param>
+        /// <typeparam name="T">表类型</typeparam>
+        /// <returns>返回查询结果</returns>
+        T FindById<T>(string id) where T : IMetaEntity, new();
+        /// <summary>
         /// 根据条件查找第一个满足条件的文件
         /// </summary>
         /// <param name="condition">条件</param>
@@ -61,6 +68,14 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// <typeparam name="T">表类型</typeparam>
         /// <returns>true:存在</returns>
         bool Any<T>(IDictionary<string, object> condition) where T : IMetaEntity, new();
+
+        /// <summary>
+        /// 检查指定条件的文件是否存在
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <typeparam name="T">表类型</typeparam>
+        /// <returns>true:存在</returns>
+        bool Any<T>(Expression<Func<T, bool>> where) where T : IMetaEntity, new();
 
         /// <summary>
         /// 查询文件列表
@@ -82,6 +97,17 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// <returns>返回指定类型对象</returns>
         List<T> FindByQuery<T, TOrderBy>(Expression<Func<T, bool>> where, Expression<Func<T, TOrderBy>> orderby,
                                          bool isAsc) where T : IMetaEntity, new();
+
+        /// <summary>
+        /// 查询文件对象列表
+        /// </summary>
+        /// <param name="where">查询条件</param>
+        /// <param name="orderby">排序条件</param>
+        /// <param name="isAsc">是否升序</param>
+        /// <typeparam name="T">返回类型</typeparam>
+        /// <typeparam name="TOrderBy">排序类型</typeparam>
+        /// <returns>返回指定类型对象</returns>
+        List<T> FindByQuery<T>(Expression<Func<T, bool>> where) where T : IMetaEntity, new();
 
         /// <summary>
         /// 分页查询文件列表
@@ -110,14 +136,7 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// <param name="id">标识</param>
         /// <param name="saveFile">保存文件路径</param>
         void DownLoad(ObjectId id, string saveFile);
-
-        /// <summary>
-        /// 根据指定条件下载查询到的第一个文件
-        /// 用于文档型数据查询
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns>true:存在</returns>
-        Stream DownLoad(IDictionary<string, object> condition);
+        
         /// <summary>
         /// 下载指定标识的文件
         /// </summary>
@@ -149,13 +168,47 @@ namespace Zhoubin.Infrastructure.Common.MongoDb
         /// <typeparam name="T">表类型</typeparam>
         /// <returns>true:存在</returns>
         Stream DownLoad<T>(IDictionary<string, object> condition) where T : IMetaEntity, new();
+       
 
+        #region download Linq
         /// <summary>
         /// 下载指定标识的文件
         /// </summary>
         /// <param name="condition">条件</param>
         /// <param name="saveFile">保存文件路径</param>
-        void DownLoad(IDictionary<string, object> condition, string saveFile);
+        void DownLoad<T>(Expression<Func<T, bool>> where, string saveFile) where T : IMetaEntity, new();
+
+        /// <summary>
+        /// 根据指定条件下载查询到的第一个文件
+        /// 用于文档型数据查询
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <typeparam name="T">表类型</typeparam>
+        /// <returns>true:存在</returns>
+        Stream DownLoad<T>(Expression<Func<T, bool>> where) where T : IMetaEntity, new();
+
+        /// <summary>
+        /// 下载指定标识的文件
+        /// </summary>
+        /// <typeparam name="T">文件元数据类型</typeparam>
+        /// <param name="id">标识</param>
+        /// <returns>返回流</returns>
+        Stream DownLoad<T>(string id) where T : IMetaEntity, new();
+
+        /// <summary>
+        /// 下载指定标识的文件
+        /// </summary>
+        /// <typeparam name="T">文件元数据类型</typeparam>
+        /// <param name="id">标识</param>
+        /// <param name="saveFile">保存文件路径</param>
+        void DownLoad<T>(string id, string saveFile) where T : IMetaEntity, new();
+        /// <summary>
+        /// 下载指定标识的文件
+        /// </summary>
+        /// <param name="id">标识</param>
+        /// <returns>返回流</returns>
+        Stream DownLoad(string id);
+        #endregion
 
         /// <summary>
         /// 删除所有文件
