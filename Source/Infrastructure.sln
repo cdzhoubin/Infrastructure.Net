@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{9E13998B-7E85-4CD1-96A3-3AD7227DD81D}"
 EndProject
@@ -67,7 +67,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.CoreConsole.Sample",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Test", "Test\Common.Test\Common.Test.csproj", "{2102AF2B-FF69-4630-A308-D886C8AEB904}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mongodb20.Test", "Mongodb20.Test\Mongodb20.Test.csproj", "{07748772-300E-4668-A7D3-0F53FEC1988F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mongodb20.Test", "Mongodb20.Test\Mongodb20.Test.csproj", "{07748772-300E-4668-A7D3-0F53FEC1988F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Consul.Sample", "Sample\Common.Consul.Sample\Common.Consul.Sample.csproj", "{D756D02A-9724-49E0-99B2-8E1EFF9B7B89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -163,6 +165,10 @@ Global
 		{07748772-300E-4668-A7D3-0F53FEC1988F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07748772-300E-4668-A7D3-0F53FEC1988F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07748772-300E-4668-A7D3-0F53FEC1988F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D756D02A-9724-49E0-99B2-8E1EFF9B7B89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D756D02A-9724-49E0-99B2-8E1EFF9B7B89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D756D02A-9724-49E0-99B2-8E1EFF9B7B89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D756D02A-9724-49E0-99B2-8E1EFF9B7B89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -188,6 +194,7 @@ Global
 		{5D87B930-0D90-409C-88A4-3DAB7F2A7984} = {0FE1BBF6-C2C5-4776-9B05-99DFB1508B5D}
 		{2102AF2B-FF69-4630-A308-D886C8AEB904} = {584BD2EB-5321-4FF5-935D-3840985B56D7}
 		{07748772-300E-4668-A7D3-0F53FEC1988F} = {584BD2EB-5321-4FF5-935D-3840985B56D7}
+		{D756D02A-9724-49E0-99B2-8E1EFF9B7B89} = {0FE1BBF6-C2C5-4776-9B05-99DFB1508B5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {127FC33F-9184-4331-A078-BB65BB3DA928}
