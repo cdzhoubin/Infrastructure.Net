@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiHelpSample</name>
+    </assembly>
+    <members>
+        <member name="T:ApiHelpSample.Controllers.WeatherForecastController">
+            <summary>
+            天气应用服务
+            </summary>
+        </member>
+        <member name="M:ApiHelpSample.Controllers.WeatherForecastController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiHelpSample.Controllers.WeatherForecastController})">
+            <summary>
+            天气应用服务
+            </summary>
+            <param name="logger"></param>
+        </member>
+        <member name="M:ApiHelpSample.Controllers.WeatherForecastController.Get">
+            <summary>
+            天气列表
+            </summary>
+            <returns>返回天气列表信息</returns>
+        </member>
+        <member name="M:ApiHelpSample.Controllers.WeatherForecastController.Get(System.String)">
+            <summary>
+            获取城市天气
+            </summary>
+            <param name="city">城市名称</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
