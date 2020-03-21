@@ -59,7 +59,57 @@ namespace Zhoubin.Infrastructure.Common
     /// <typeparam name="T">查询出的数据类型</typeparam>
     public class PageInfo<T> : PageInfo
     {
-        internal PageInfo()
+        public PageInfo()
+        {
+            DataList = new List<T>();
+        }
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="index">索引，从1开始记数</param>
+        /// <param name="pageSize">大小</param>
+        /// <param name="count">总数</param>
+        /// <param name="dataList">数据</param>
+        public PageInfo(int index, int pageSize, int count, List<T> dataList)
+        {
+            Index = index;
+            PageSize = pageSize;
+            Count = count;
+            DataList = dataList;
+        }
+
+        /// <summary>
+        /// 页面索引
+        /// </summary>
+        public int Index { get; set; }
+        /// <summary>
+        /// 分页大小
+        /// </summary>
+        public int PageSize { get; set; }
+        /// <summary>
+        /// 记录总数
+        /// </summary>
+        public int Count { get; set; }
+        /// <summary>
+        /// 数据集信息
+        /// </summary>
+        public List<T> DataList { get; set; }
+
+        /// <summary>
+        /// 空
+        /// </summary>
+        public static PageInfo<T> Empty
+        {
+            get { return new PageInfo<T>(); }
+        }
+    }
+    /// <summary>
+    /// 分页查询信息泛型类
+    /// </summary>
+    /// <typeparam name="T">查询出的数据类型</typeparam>
+    public class ReadOnlyPageInfo<T> : PageInfo
+    {
+        public ReadOnlyPageInfo()
         {
             DataList = new ReadOnlyCollection<T>(new T[0]);
         }
@@ -70,7 +120,7 @@ namespace Zhoubin.Infrastructure.Common
         /// <param name="pageSize">大小</param>
         /// <param name="count">总数</param>
         /// <param name="dataList">数据</param>
-        public PageInfo(int index, int pageSize, int count, List<T> dataList)
+        public ReadOnlyPageInfo(int index, int pageSize, int count, List<T> dataList)
         {
             Index = index;
             PageSize = pageSize;

@@ -141,7 +141,7 @@ namespace Zhoubin.Infrastructure.Common.Cryptography
         public static string Sign(string data, SignType type)
         {
             var bytes = Encoding.UTF8.GetBytes(data);
-            var result = Sign(bytes, type);
+            var result = Sign(new MemoryStream(bytes), type);
             var ret = new StringBuilder();
             foreach (var b in result)
             {
@@ -157,9 +157,11 @@ namespace Zhoubin.Infrastructure.Common.Cryptography
         /// <returns>签名数据</returns>
         public static string Sign(Stream data, SignType type)
         {
-            var bytes = new byte[(int)data.Length];
-            data.Read(bytes, 0, (int)data.Length);
-            var result = Sign(bytes, type);
+            var result = SignStream(data, type);
+            if(result == null)
+            {
+                return null;
+            }
             var ret = new StringBuilder();
             foreach (var b in result)
             {
@@ -167,7 +169,15 @@ namespace Zhoubin.Infrastructure.Common.Cryptography
             }
             return ret.ToString();
         }
-        private static IEnumerable<byte> Sign(byte[] data, SignType type)
+        //private static IEnumerable<byte> Sign(byte[] data, SignType type)
+        //{
+        //    var hashAlgorithm = HashAlgorithm.Create(type.ToString());
+        //    if (hashAlgorithm != null)
+        //        return hashAlgorithm.ComputeHash(data);
+        //    return null;
+        //}
+
+        private static IEnumerable<byte> SignStream(Stream data, SignType type)
         {
             var hashAlgorithm = HashAlgorithm.Create(type.ToString());
             if (hashAlgorithm != null)

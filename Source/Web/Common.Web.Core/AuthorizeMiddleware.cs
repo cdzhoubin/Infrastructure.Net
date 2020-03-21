@@ -15,18 +15,27 @@ namespace Zhoubin.Infrastructure.Common.Web
         private readonly Func<string, List<string>> _queryUserRoles;
         private readonly RequestDelegate _next;
         private readonly Func<IIdentity, IIdentity> _changeIdentity;
+        private Func<HttpContext, bool> _validHttpContext;
 
-        public AuthorizeMiddleware(RequestDelegate next, Func<string, List<string>> queryUserRoles, Func<IIdentity, IIdentity> changeIdentity)
+        public AuthorizeMiddleware(RequestDelegate next, Func<string, List<string>> queryUserRoles, Func<IIdentity, IIdentity> changeIdentity, Func<HttpContext, bool> validHttpContext)
         {
             _next = next;
             _queryUserRoles = queryUserRoles;
             _changeIdentity = changeIdentity;
+            _validHttpContext = validHttpContext;
         }
 
         public Task Invoke(HttpContext httpContext)
         {
             if (httpContext.User != null && httpContext.User.Identity != null)
             {
+                if (_validHttpContext != null)
+                {
+                    if (!_validHttpContext(httpContext))
+                    {
+                        return _next(httpContext);
+                    }
+                }
                 var identity = httpContext.User.Identity;
                 if (identity.IsAuthenticated)
                 {
@@ -59,12 +68,24 @@ namespace Zhoubin.Infrastructure.Common.Web
     {
         public static IApplicationBuilder UseAuthorizeMiddleware(this IApplicationBuilder builder, Func<IIdentity, IIdentity> changeIdentity, Func<string, List<string>> queryUserRoles = null)
         {
-            return builder.UseMiddleware<AuthorizeMiddleware>(queryUserRoles, changeIdentity);
+            return UseAuthorizeMiddleware(builder, changeIdentity, queryUserRoles, null);
         }
-        public static IApplicationBuilder UseAuthorizeMiddleware(this IApplicationBuilder builder, Func<string, List<string>> queryUserRoles)
+        public static IApplicationBuilder UseAuthorizeMiddleware(this IApplicationBuilder builder, Func<IIdentity, IIdentity> changeIdentity, Func<string, List<string>> queryUserRoles = null, Func<HttpContext, bool> validHttpContext = null)
+        {
+            if (validHttpContext == null)
+            {
+                validHttpContext = context => true;
+            }
+            if (queryUserRoles == null)
+            {
+                queryUserRoles = user => new List<string>();
+            }
+            return builder.UseMiddleware<AuthorizeMiddleware>(queryUserRoles, changeIdentity, validHttpContext);
+        }
+        public static IApplicationBuilder UseAuthorizeMiddleware(this IApplicationBuilder builder, Func<string, List<string>> queryUserRoles, Func<HttpContext, bool> validHttpContext = null)
         {
             Func<IIdentity, IIdentity> changeIdentity = identity => identity;
-            return UseAuthorizeMiddleware(builder, changeIdentity, queryUserRoles);
+            return UseAuthorizeMiddleware(builder, changeIdentity, queryUserRoles, validHttpContext);
         }
     }
 }
